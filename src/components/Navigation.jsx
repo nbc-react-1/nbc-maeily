@@ -38,7 +38,7 @@ const Navigation = () => {
     <NavContainer>
       <span>
         {/* <Link to="/"> */}
-        <img onClick={goToHome} src="https://user-images.githubusercontent.com/129598273/248737302-ce620d30-836f-47dd-b0d8-bdccbb63931d.png" alt="logo" />
+        <img onClick={goToHome} src="../img/img.jpeg" alt="logo" />
         {/* </Link> */}
         <NavSpan>
           <span>Home</span>
