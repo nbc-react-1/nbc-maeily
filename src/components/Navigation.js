@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link, useNavigate } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
+import JoinUserModal from './modal/JoinUserModal';
+// import SocialKakao from './kakao/SocialKakao';
 const NavContainer = styled.div`
   width: 100vw;
   height: 60px;
@@ -44,17 +45,18 @@ const Navigation = () => {
           <span>Home</span>
           <span>Mypage</span>
           {/* 비로그인시 보여줄 버튼 */}
-          <div>
-            <button>로그인</button>
-            <button>회원가입</button>
-          </div>
+            {/* <SocialKakao/> */}
           {/* 로그인했을시 보여줄버튼 */}
           <div>
             <button>글작성</button>
             <button>
               프로필
-              <img src="" alt="profile-image" />
+              
             </button>
+          </div>
+          <div>
+            <button>로그인</button>
+            <JoinUserModal>회원가입</JoinUserModal>
           </div>
         </NavSpan>
       </span>
@@ -63,3 +65,4 @@ const Navigation = () => {
 };
 
 export default Navigation;
+

@@ -1,18 +1,9 @@
-import React from 'react';
-
 const Home = () => {
+
   return (
-    <>
-      <div>
-        <ul>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-        </ul>
-      </div>
-    </>
+    <div>
+      홈 화면 입니다.
+    </div>
   );
 };
-
 export default Home;
