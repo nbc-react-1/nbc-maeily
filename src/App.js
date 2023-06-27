@@ -7,7 +7,14 @@ import Login from './pages/Login';
 import Mypage from './pages/Mypage/Mypage';
 import SignIn from './pages/SignIn';
 import { Route, Routes } from 'react-router-dom';
+import { useEffect } from 'react';
+import { app } from './firebase';
+
+
 function App() {
+  useEffect(() => {
+    console.log('app', app);
+  });
   return (
     <div>
       <GlobalStyle/>
