@@ -8,9 +8,9 @@ export const ButtonWrap = styled.div`
 `;
 export const StButton = styled.button`
   align-items: center;
-  background-color: ${props => props.bgColor || '#fff'};
+  background-color: ${props => props.bgColor || '#000'};
   border: ${props => props.stBorder || 'none'};
-  color: ${props => props.fontColor || 'black'};
+  color: ${props => props.fontColor || 'white'};
   border-radius: 8px;
   padding: 12px 0;
 

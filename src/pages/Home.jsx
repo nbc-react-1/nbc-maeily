@@ -1,39 +1,64 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { styled } from 'styled-components';
+import List from '../components/List';
 import { StButton, ButtonWrap } from '../components/Button';
+import { app } from '../firebase';
+import { getDocs, collection } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const Home = () => {
   return (
     <>
       {/* 상단 게시글 등록 버튼  */}
       <div>
-        <ul>
-          <li>게시글 리스트</li>
-          <li>게시글 리스트</li>
-          <li>게시글 리스트</li>
-          <li>게시글 리스트</li>
-          <li>게시글 리스트</li>
-        </ul>
+        <StBanner>
+          <StH1>maeilyLook</StH1>
+        </StBanner>
+        <List />
       </div>
 
       <CreatePost />
     </>
   );
 };
+export default Home;
+const StBanner = styled.div`
+  background-color: black;
+  height: 200px;
+  border-bottom-left-radius: 15%;
+  border-bottom-right-radius: 15%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 40px;
+`;
+const StH1 = styled.h1`
+  color: white;
+  font-size: 50px;
+`;
 
 const CreatePost = () => {
+  useEffect(() => {
+    console.log('app', app);
+  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      const querySnapshot = await getDocs(collection(db, 'post-item'));
+      const initialPostItem = [];
+      querySnapshot.forEach(doc => {
+        console.log(`${doc.id} => ${doc.data()}`);
+      });
+    };
+    fetchData();
+  }, []);
   return (
     <>
       <ModalBg>
         <ModalContents>
           {/* 수정페이지에서 보여줘야함 */}
           <ButtonWrap style={{ float: 'right' }}>
-            <StButton bgColor={'#00e6bf'} acColor={'#00a589'}>
-              수정
-            </StButton>
-            <StButton bgColor={'#00e6bf'} acColor={'#00a589'}>
-              삭제
-            </StButton>
+            <StButton acColor={'#39ddc2'}>수정</StButton>
+            <StButton acColor={'#39ddc2'}>삭제</StButton>
           </ButtonWrap>
 
           <form action="" style={{ clear: 'both', overflow: 'hidden' }}>
@@ -42,7 +67,7 @@ const CreatePost = () => {
             <Label>내용</Label>
             <InputArea />
           </form>
-          <StButton style={{ float: 'right' }} bgColor={'#00e6bf'} acColor={'#00a589'}>
+          <StButton style={{ float: 'right' }} acColor={'#39ddc2'}>
             등록
           </StButton>
         </ModalContents>
@@ -50,7 +75,6 @@ const CreatePost = () => {
     </>
   );
 };
-export default Home;
 
 const ModalBg = styled.div`
   width: 100%;
