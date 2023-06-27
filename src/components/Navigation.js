@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
-
+import JoinUserModal from './modal/JoinUserModal';
 const Navigation = () => {
   const navigation = useNavigate();
   const location = useLocation();
@@ -15,9 +15,7 @@ const Navigation = () => {
   const goToLogIn = () => {
     navigation('/login');
   };
-  const goToSignIn = () => {
-    navigation('/signin');
-  };
+
   const NavContainer = styled.div`
     width: 100vw;
     height: 60px;
@@ -77,7 +75,7 @@ const Navigation = () => {
       {/* 비로그인시 보여줄 버튼 */}
       <NavDiv>
         <button onClick={goToLogIn}>Log In</button>
-        <button onClick={goToSignIn}>Sign In</button>
+        <JoinUserModal>Sign Up</JoinUserModal>
 
         {/* 로그인했을시 보여줄버튼 */}
         {/* <div>

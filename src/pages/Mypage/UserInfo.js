@@ -11,9 +11,9 @@ const UserInfo = () => {
 
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const handleEdit = () => {
-    console.log('Edit button clicked');
-  };
+  // const handleEdit = () => {
+  //   console.log('Edit button clicked');
+  // };
 
   const handleDelete = () => {
     console.log('Delete button clicked');

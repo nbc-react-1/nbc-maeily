@@ -1,4 +1,5 @@
 import './App.css';
+import GlobalStyle from './GlobalStyle';
 import Footer from './components/Footer';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
@@ -6,11 +7,11 @@ import Login from './pages/Login';
 import Mypage from './pages/Mypage/Mypage';
 import SignIn from './pages/SignIn';
 import { Route, Routes } from 'react-router-dom';
-
 function App() {
   return (
     <div>
-      {/* <Navigation /> */}
+      <GlobalStyle/>
+      <Navigation />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

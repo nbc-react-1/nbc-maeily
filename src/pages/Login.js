@@ -90,7 +90,7 @@ const Login = () => {
     const password = e.target[1].value;
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       navigation('/');
     } catch (error) {
       console.error(error);
@@ -114,7 +114,7 @@ const Login = () => {
       <Navigation />
       <LogDiv>
         <div>
-          <img src="" />
+         
         </div>
         <div>
           <h2>Sign up</h2>
