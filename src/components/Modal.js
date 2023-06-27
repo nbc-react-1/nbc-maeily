@@ -7,16 +7,19 @@ const ModalOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.2);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
 `;
 
 const ModalContent = styled.div`
   background-color: #fff;
-  border-radius: 8px;
-  padding: 20px;
+  padding: 40px 60px 40px 50px;
+  width: 400px;
+  height: 50%;
+  border-radius: 12px;
 `;
 
 const Modal = ({ children }) => {

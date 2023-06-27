@@ -1,4 +1,5 @@
 import './App.css';
+import GlobalStyle from './GlobalStyle';
 import Footer from './components/Footer';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
@@ -9,12 +10,14 @@ import { Route, Routes } from 'react-router-dom';
 import { useEffect } from 'react';
 import { app } from './firebase';
 
+
 function App() {
   useEffect(() => {
     console.log('app', app);
   });
   return (
     <div>
+      <GlobalStyle/>
       <Navigation />
       <Routes>
         <Route path="/" element={<Home />} />

@@ -1,8 +1,11 @@
-import React from 'react';
 
+import React from 'react';
+import Navigation from '../components/Navigation';
 const Home = () => {
+
   return (
     <>
+      <Navigation />
       <div>
         <ul>
           <li></li>
@@ -14,5 +17,4 @@ const Home = () => {
     </>
   );
 };
-
 export default Home;

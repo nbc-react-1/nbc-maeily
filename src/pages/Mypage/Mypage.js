@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import UserInfo from './UserInfo';
 import MyPosts from './MyPosts';
+import Navigation from '../../components/Navigation';
 
 const Mypage = () => {
   const [activeTab, setActiveTab] = useState('info'); // 'info' 또는 'posts'로 초기화
@@ -11,26 +12,29 @@ const Mypage = () => {
   };
 
   return (
-    <MypageContainer>
-      <UserImage src="https://avatars.githubusercontent.com/u/133937368?v=4" alt="User Image" />
-      <UserName>suzzjeon</UserName>
-      <NavigationText>
-        <span onClick={() => handleTabChange('info')}>회원정보 보기</span> | <span onClick={() => handleTabChange('posts')}>내가 쓴 게시글</span>
-      </NavigationText>
-      {/* 내용에 따라 조건부로 컴포넌트를 렌더링 */}
-      {activeTab === 'info' && (
-        <div>
-          {<UserInfo />}
-          {/* 회원정보 표시 */}
-        </div>
-      )}
-      {activeTab === 'posts' && (
-        <div>
-          {<MyPosts />}
-          {/* 내가 쓴 게시글 표시 */}
-        </div>
-      )}
-    </MypageContainer>
+    <>
+      <Navigation />
+      <MypageContainer>
+        <UserImage src="https://avatars.githubusercontent.com/u/133937368?v=4" alt="User Image" />
+        <UserName>suzzjeon</UserName>
+        <NavigationText>
+          <span onClick={() => handleTabChange('info')}>회원정보 보기</span> | <span onClick={() => handleTabChange('posts')}>내가 쓴 게시글</span>
+        </NavigationText>
+        {/* 내용에 따라 조건부로 컴포넌트를 렌더링 */}
+        {activeTab === 'info' && (
+          <div>
+            {<UserInfo />}
+            {/* 회원정보 표시 */}
+          </div>
+        )}
+        {activeTab === 'posts' && (
+          <div>
+            {<MyPosts />}
+            {/* 내가 쓴 게시글 표시 */}
+          </div>
+        )}
+      </MypageContainer>
+    </>
   );
 };
 
