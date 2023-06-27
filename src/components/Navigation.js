@@ -42,7 +42,9 @@ const Navigation = () => {
         {/* </Link> */}
         <NavSpan>
           <span>Home</span>
-          <span>Mypage</span>
+          <span>
+            <Link to="/mypage">Mypage</Link>
+          </span>
           {/* 비로그인시 보여줄 버튼 */}
           <div>
             <button>로그인</button>
