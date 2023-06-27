@@ -1,68 +1,109 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import JoinUserModal from './modal/JoinUserModal';
-// import SocialKakao from './kakao/SocialKakao';
-const NavContainer = styled.div`
-  width: 100vw;
-  height: 60px;
-  border-bottom: 1px solid gray;
-  flex-direction: row;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 10px;
-
-  & > span {
-    display: flex;
-    align-items: center;
-  }
-  & > span > img {
-    width: 100px;
-    margin-right: 40px;
-    cursor: pointer;
-  }
-`;
-
-const NavSpan = styled.span`
-  display: flex;
-  justify-content: space-between;
-`;
-
 const Navigation = () => {
   const navigation = useNavigate();
+  const location = useLocation();
 
   const goToHome = () => {
     navigation('/');
   };
+  const goToMypage = () => {
+    navigation('/mypage');
+  };
+  const goToLogIn = () => {
+    navigation('/login');
+  };
+
+  const NavContainer = styled.div`
+    width: 100vw;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    color: ${location.pathname === '/login' ? 'white' : 'black'};
+
+    & > h2 {
+      font-weight: 900;
+      font-size: 20px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    & > h2 {
+      font-weight: 900;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    & > span {
+      display: flex;
+      align-items: center;
+      margin: 0 20px;
+    }
+    & > span > span {
+      margin: 0 5px;
+      cursor: pointer;
+      font-family: sans-serif;
+      font-size: 15px;
+      margin: 0 20px;
+    }
+    & > span > span {
+      margin: 0 5px;
+      cursor: pointer;
+      font-family: sans-serif;
+      font-size: 15px;
+    }
+    & > span > img {
+      width: 100px;
+      margin-right: 40px;
+      cursor: pointer;
+    }
+  `;
   return (
     <NavContainer>
+      <h2 onClick={goToHome}>Logo</h2>
       <span>
-        {/* <Link to="/"> */}
-        <img onClick={goToHome} src="https://user-images.githubusercontent.com/129598273/248737302-ce620d30-836f-47dd-b0d8-bdccbb63931d.png" alt="logo" />
-        {/* </Link> */}
-        <NavSpan>
-          <span>Home</span>
-          <span>Mypage</span>
-          {/* 비로그인시 보여줄 버튼 */}
-            {/* <SocialKakao/> */}
-          {/* 로그인했을시 보여줄버튼 */}
-          <div>
-            <button>글작성</button>
-            <button>
-              프로필
-              
-            </button>
-          </div>
-          <div>
-            <button>로그인</button>
-            <JoinUserModal>회원가입</JoinUserModal>
-          </div>
-        </NavSpan>
+        <span onClick={goToHome}>Home</span>
+        <span onClick={goToMypage}>Mypage</span>
       </span>
+
+      {/* 비로그인시 보여줄 버튼 */}
+      <NavDiv>
+        <button onClick={goToLogIn}>Log In</button>
+        <JoinUserModal>Sign Up</JoinUserModal>
+
+        {/* 로그인했을시 보여줄버튼 */}
+        {/* <div>
+          <button>글작성</button>
+          <button>
+            프로필
+            <img src="" alt="profile-image" />
+          </button>
+        </div> */}
+      </NavDiv>
     </NavContainer>
   );
 };
 
-export default Navigation;
+const NavDiv = styled.div`
+  position: absolute;
+  right: 10px;
 
+  & > button {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 20px;
+    border: none;
+    background-color: black;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+  }
+`;
+
+export default Navigation;

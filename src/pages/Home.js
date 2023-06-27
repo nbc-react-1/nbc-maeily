@@ -1,9 +1,20 @@
+
+import React from 'react';
+import Navigation from '../components/Navigation';
 const Home = () => {
 
   return (
-    <div>
-      홈 화면 입니다.
-    </div>
+    <>
+      <Navigation />
+      <div>
+        <ul>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+    </>
   );
 };
 export default Home;
