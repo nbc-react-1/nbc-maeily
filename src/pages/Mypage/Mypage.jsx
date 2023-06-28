@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import UserInfo from './UserInfo';
 import MyPosts from './MyPosts';
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
 import { useSelector } from 'react-redux';
-
+import MyInfo from './MyInfo';
 const Mypage = () => {
   const { storeInfo } = useSelector(state => state.userLogIn);
   const [activeTab, setActiveTab] = useState('info'); // 'info' 또는 'posts'로 초기화
@@ -30,13 +29,13 @@ const Mypage = () => {
         {/* 내용에 따라 조건부로 컴포넌트를 렌더링 */}
         {activeTab === 'info' && (
           <div>
-            {<UserInfo />}
+            <MyInfo />
             {/* 회원정보 표시 */}
           </div>
         )}
         {activeTab === 'posts' && (
           <div>
-            {<MyPosts />}
+            <MyPosts />
             {/* 내가 쓴 게시글 표시 */}
           </div>
         )}

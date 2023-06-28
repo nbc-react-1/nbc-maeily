@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import JoinUserModal from './modal/JoinUserModal';
+
 import { useSelector, useDispatch } from 'react-redux';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
