@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import Navigation from '../components/Navigation';
+import { useDispatch, useSelector } from 'react-redux';
+
 const LogDiv = styled.div`
   width: 100vw;
   height: 100vh;
@@ -19,8 +21,11 @@ const LogDiv = styled.div`
   }
 
   & > div:nth-child(1) {
-    background-color: antiquewhite;
     width: 45vw;
+    background-image: url('https://img.shopcider.com/hermes/posting/tiny-image-1686040660000-azbrwx.jpeg?x-oss-process=image/resize,w_1400,m_lfit/quality,Q_80/interlace,1');
+    height: 100vh;
+    background-position: center;
+    background-size: cover;
   }
   & > div:nth-child(2) {
     background-color: white;
@@ -69,11 +74,12 @@ const LogDiv = styled.div`
     & > form > p {
       font-size: 13px;
       color: gray;
+      cursor: pointer;
     }
     & > form > button {
       padding: 10px 15px;
       border: none;
-      background-color: black;
+      background-color: #121212;
       color: white;
       font-weight: 700;
       border-radius: 10px;
@@ -84,22 +90,32 @@ const LogDiv = styled.div`
 
 const Login = () => {
   const navigation = useNavigate();
+  const dispatch = useDispatch();
+  // const { sucessUserInfo, isUserTrue } = useSelector(state => state.userLogIn);
+  const [loadingBtn, setLoadingBtn] = useState(false);
+
   const handleSignIn = async e => {
     e.preventDefault();
+    setLoadingBtn(true);
     const email = e.target[0].value;
     const password = e.target[1].value;
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      onAuthStateChanged(auth, user => {
+        dispatch({ type: 'SUCESS_USER_LOGIN', payload: { user: user } });
+      });
+      setLoadingBtn(false);
       navigation('/');
     } catch (error) {
-      console.error(error);
+      setLoadingBtn(false);
+      alert('다시 입력해주세요');
     }
   };
 
+  // console.log(sucessUserInfo, isUserTrue);
   const handlePassword = () => {
-    console.log('sdfsf');
-    const email = prompt('dmail');
+    const email = prompt('email');
     sendPasswordResetEmail(auth, email)
       .then(a => {
         alert('가입된 이메일의 메일함을 확인해 주세요!');
@@ -113,17 +129,15 @@ const Login = () => {
     <>
       <Navigation />
       <LogDiv>
+        <div></div>
         <div>
-         
-        </div>
-        <div>
-          <h2>Sign up</h2>
+          <h2>Log In</h2>
           <form onSubmit={handleSignIn}>
             <input id="email" type="email" required placeholder="email" />
             <input id="password" type="password" required placeholder="password" />
 
             <p onClick={handlePassword}>비밀번호 찾기</p>
-            <button type="submit">sign up</button>
+            <button type="submit">{loadingBtn ? 'Waiting...' : 'Log In'} </button>
             <p>Do you have an account?</p>
           </form>
         </div>
