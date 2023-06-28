@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import UserInfo from './UserInfo';
 import MyPosts from './MyPosts';
 import Navigation from '../../components/Navigation';
+import Footer from '../../components/Footer';
 
 const Mypage = () => {
   const [activeTab, setActiveTab] = useState('info'); // 'info' 또는 'posts'로 초기화
@@ -34,6 +35,7 @@ const Mypage = () => {
           </div>
         )}
       </MypageContainer>
+      <Footer />
     </>
   );
 };

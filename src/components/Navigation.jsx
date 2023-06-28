@@ -1,11 +1,30 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useState } from 'react';
+import styled, { keyframes } from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import JoinUserModal from './modal/JoinUserModal';
+import { useSelector, useDispatch } from 'react-redux';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase';
 
 const Navigation = () => {
+  const [scrolled, setScrolled] = useState(false);
   const navigation = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
+  const { isUserTrue } = useSelector(state => state.userLogIn);
+
+  useEffect(() => {
+    const onscroll = () => {
+      if (window.scrollY > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', onscroll);
+    return () => console.log('ddddddd');
+  }, []);
 
   const goToHome = () => {
     navigation('/');
@@ -17,6 +36,31 @@ const Navigation = () => {
     navigation('/login');
   };
 
+  const userLogOut = async e => {
+    e.preventDefault();
+    await signOut(auth);
+    dispatch({ type: 'LOGOUT_USER' });
+    navigation('/');
+  };
+
+  const bannerToBlack = keyframes`
+    from {
+      background-color: transparent;
+    }to {
+      background-color: #121212;
+      color: white;
+    }
+    `;
+
+  const buttonToWhite = keyframes`
+    from {
+      background-color: #121212;
+      color: white;
+    }to {
+      background-color: white;
+      color: #121212;
+    }
+    `;
 
   const NavContainer = styled.div`
     width: 100vw;
@@ -30,7 +74,11 @@ const Navigation = () => {
     right: 0;
     z-index: 9999;
     color: ${location.pathname === '/login' ? 'white' : 'black'};
- 
+    animation-duration: 0.3s;
+    animation-timing-function: ease-in-out;
+    animation-name: ${scrolled ? bannerToBlack : ''};
+    animation-fill-mode: forwards;
+
     & > h2 {
       font-weight: 900;
       font-size: 20px;
@@ -67,6 +115,28 @@ const Navigation = () => {
     }
   `;
 
+  const NavDiv = styled.div`
+    position: absolute;
+    right: 10px;
+
+    & > button {
+      padding: 8px 15px;
+      margin: 5px;
+      border-radius: 17px;
+      border: none;
+      background-color: #121212;
+      color: white;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+
+      animation-duration: 0.3s;
+      animation-timing-function: ease-in-out;
+      animation-name: ${scrolled ? buttonToWhite : ''};
+      animation-fill-mode: forwards;
+    }
+  `;
+
   return (
     <NavContainer>
       <h2 onClick={goToHome}>Logo</h2>
@@ -75,38 +145,12 @@ const Navigation = () => {
         <span onClick={goToMypage}>Mypage</span>
       </span>
 
-      {/* 비로그인시 보여줄 버튼 */}
       <NavDiv>
-        <button onClick={goToLogIn}>Log In</button>
-        <JoinUserModal></JoinUserModal>
-
-        {/* 로그인했을시 보여줄버튼 */}
-        {/* <div>
-          <button>글작성</button>
-          <button>
-            프로필
-            <img src="" alt="profile-image" />
-          </button>
-        </div> */}
+        {isUserTrue ? <button onClick={userLogOut}>Log out</button> : <button onClick={goToLogIn}>Log In</button>}
+        <JoinUserModal>Sign Up</JoinUserModal>
       </NavDiv>
     </NavContainer>
   );
 };
-
-const NavDiv = styled.div`
-  position: absolute;
-  right: 10px;
-  display: flex;
-  & > button {
-    padding: 10px;
-    margin: 5px;
-    border-radius: 20px;
-    border: none;
-    background-color: black;
-    color: white;
-    font-weight: 700;
-    cursor: pointer;
-  }
-`;
 
 export default Navigation;
