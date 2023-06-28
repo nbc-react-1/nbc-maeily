@@ -4,20 +4,26 @@ import UserInfo from './UserInfo';
 import MyPosts from './MyPosts';
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
+import { useSelector } from 'react-redux';
 
 const Mypage = () => {
+  const { storeInfo } = useSelector(state => state.userLogIn);
   const [activeTab, setActiveTab] = useState('info'); // 'info' 또는 'posts'로 초기화
 
   const handleTabChange = tab => {
     setActiveTab(tab);
   };
 
+  console.log(storeInfo, 'mypage');
+
+  const { profileImg, nickname } = storeInfo;
+
   return (
     <>
       <Navigation />
       <MypageContainer>
-        <UserImage src="https://avatars.githubusercontent.com/u/133937368?v=4" alt="User Image" />
-        <UserName>suzzjeon</UserName>
+        <UserImage src={profileImg} alt="User Image" />
+        <UserName>{nickname}</UserName>
         <NavigationText>
           <span onClick={() => handleTabChange('info')}>회원정보 보기</span> | <span onClick={() => handleTabChange('posts')}>내가 쓴 게시글</span>
         </NavigationText>

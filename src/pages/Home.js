@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navigation from '../components/Navigation';
 import styled from 'styled-components';
 import Footer from '../components/Footer';
+import { doc, getDoc } from 'firebase/firestore';
+import { useDispatch, useSelector } from 'react-redux';
+import { db } from '../firebase';
+import { collection, getDocs } from 'firebase/firestore';
+import { updateDoc } from 'firebase/firestore';
 
 const Banner = styled.div`
   width: 100vw;
@@ -24,10 +29,23 @@ const Banner = styled.div`
 `;
 
 const Home = () => {
+  const dispatch = useDispatch();
+  const { sucessUserInfo, storeInfo, isUserTrue } = useSelector(state => state.userLogIn);
+
+  const arr = async () => {
+    const washingtonRef = doc(db, 'arr', 'sss');
+
+    // Set the "capital" field of the city 'DC'
+    await updateDoc(washingtonRef, {
+      aa: [{ sfsdfd: 'sfsf' }, { sfsdf: 'sfsfsdf' }],
+    });
+  };
+
   return (
     <>
       <Navigation />
       <Banner>
+        <button onClick={arr}>arr</button>
         <div>
           <h1>Title banner here</h1>
         </div>
