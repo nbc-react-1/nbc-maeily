@@ -2,8 +2,9 @@ import React, { useState, useRef } from 'react';
 import { styled } from 'styled-components';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../../firebase';
-import { addDoc, collection, getDocs, query } from 'firebase/firestore';
+import { collection, doc, getDocs, query, setDoc } from 'firebase/firestore';
 import Modal from '../Modal';
+
 const JoinUserModal = () => {
   const emailRef = useRef('');
   const nicknameRef = useRef('');
@@ -67,23 +68,21 @@ const JoinUserModal = () => {
     try {
       const matchName = query(collection(db, 'users'));
       const querySnapshot = await getDocs(matchName);
-      console.log('querySnapshot', querySnapshot);
+
       const initialUsers = [];
       let overlapNickname;
-      console.log('overlapNickname1', overlapNickname);
+
       await querySnapshot.forEach(doc => {
         initialUsers.push({ id: doc.id, ...doc.data() });
-        console.log('initialUsers', initialUsers);
         const nicknameArr = initialUsers.map(e => e.nickname);
-        console.log('nicknameArr', nicknameArr);
         overlapNickname = nicknameArr.indexOf(nickname);
       });
-      console.log('overlapNickname2', overlapNickname);
+
       if (overlapNickname === -1 || overlapNickname === undefined) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const newUsers = { email, password, nickname, name, profileImg: 'https://firebasestorage.googleapis.com/v0/b/maily-acc5a.appspot.com/o/default.png?alt=media&token=2b70c710-11c6-444b-a416-df5db34da880' };
-        const collectionRef = collection(db, 'users');
-        addDoc(collectionRef, newUsers);
+        const newUsers = { uid: userCredential.user.uid, email, password, nickname, name, profileImg: 'https://firebasestorage.googleapis.com/v0/b/maily-acc5a.appspot.com/o/default.png?alt=media&token=2b70c710-11c6-444b-a416-df5db34da880' };
+
+        await setDoc(doc(db, 'users', userCredential.user.uid), newUsers);
         setEmail('');
         setPassword('');
         setname('');
@@ -99,19 +98,20 @@ const JoinUserModal = () => {
       emailRef.current.focus();
     }
   };
+
   return (
     <div>
-      <StButton onClick={openModal}>Sign Up</StButton>
+      <OpenModalButton onClick={openModal}>Sign Up</OpenModalButton>
       {isOpen && (
         <Modal>
           <div>
             <StModalHeader>
-              <img src="/maeily-logo.png" alt="logo" style={{ width: '250px' }} />
-              <StModalCloseButton onClick={closeModal}>
-                <StSvg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+              <img src="/maeily-logo.png" alt="logo" style={{ width: '200px' }} />
+              <ModalCloseButton onClick={closeModal}>
+                <CloseButtonSvg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
                   <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z" />
-                </StSvg>
-              </StModalCloseButton>
+                </CloseButtonSvg>
+              </ModalCloseButton>
             </StModalHeader>
             <form>
               <div>
@@ -205,16 +205,16 @@ const JoinUserModal = () => {
               </div>
             </form>
           </div>
-          <StSubmitButton disabled={checkEmail && checkPassword && checkNickname && checkname ? false : true} onClick={signUp}>
+          <JoinButton disabled={checkEmail && checkPassword && checkNickname && checkname ? false : true} onClick={signUp}>
             가입하기
-          </StSubmitButton>
+          </JoinButton>
         </Modal>
       )}
     </div>
   );
 };
 
-const StButton = styled.button`
+const OpenModalButton = styled.button`
   padding: 10px;
   margin: 5px;
   border-radius: 20px;
@@ -225,7 +225,7 @@ const StButton = styled.button`
   cursor: pointer;
 `;
 
-const StSubmitButton = styled.button`
+const JoinButton = styled.button`
   border: none;
   cursor: pointer;
   border-radius: 8px;
@@ -235,14 +235,14 @@ const StSubmitButton = styled.button`
   font-weight: 700;
   background-color: ${props => (props.disabled ? '#ebebeb' : '#000;')};
   float: right;
-  margin: 26px 0 0 10px;
+  margin: 15px 0 0 10px;
 `;
 const StModalHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  padding-bottom: 10px;
+  padding-bottom: 20px;
 `;
-const StModalCloseButton = styled.button`
+const ModalCloseButton = styled.button`
   background-color: transparent;
   font-size: 38px;
   position: relative;
@@ -250,7 +250,7 @@ const StModalCloseButton = styled.button`
   left: 19%;
   height: 40px;
 `;
-const StSvg = styled.svg`
+const CloseButtonSvg = styled.svg`
   fill: #7c7c7c;
   transition: scale 0.3s;
   &:hover {
