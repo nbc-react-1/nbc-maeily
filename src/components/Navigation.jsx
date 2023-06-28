@@ -26,6 +26,7 @@ const Navigation = () => {
     window.addEventListener('scroll', onscroll);
     return () => console.log('ddddddd');
   }, []);
+
   const goToHome = () => {
     navigation('/');
   };

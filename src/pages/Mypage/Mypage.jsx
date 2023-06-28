@@ -5,6 +5,7 @@ import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
 import { useSelector } from 'react-redux';
 import MyInfo from './MyInfo';
+
 const Mypage = () => {
   const { storeInfo } = useSelector(state => state.userLogIn);
   const [activeTab, setActiveTab] = useState('info'); // 'info' 또는 'posts'로 초기화

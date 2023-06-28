@@ -14,8 +14,8 @@ const FooterContainer = styled.div`
 
 const FooterSpan = styled.span`
   & > span {
-    width: 15px;
-    height: 15px;
+    width: 30px;
+    height: 30px;
     padding: 8px;
     display: inline-flex;
     border: 1px solid white;
