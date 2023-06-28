@@ -75,7 +75,7 @@ const Navigation = () => {
       {/* 비로그인시 보여줄 버튼 */}
       <NavDiv>
         <button onClick={goToLogIn}>Log In</button>
-        <JoinUserModal>Sign Up</JoinUserModal>
+        <JoinUserModal></JoinUserModal>
 
         {/* 로그인했을시 보여줄버튼 */}
         {/* <div>
@@ -93,7 +93,7 @@ const Navigation = () => {
 const NavDiv = styled.div`
   position: absolute;
   right: 10px;
-
+  display: flex;
   & > button {
     padding: 10px;
     margin: 5px;
