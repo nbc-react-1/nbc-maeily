@@ -102,7 +102,7 @@ const Home = () => {
   };
 
   return (
-    <>
+    <div>
       {/* 상단 게시글 등록 버튼  */}
       <div>
         <Navigation />
@@ -162,9 +162,10 @@ const Home = () => {
           </ModalBg>
         )}
       </div>
-    </>
+    </div>
   );
 };
+
 export default Home;
 
 // banner

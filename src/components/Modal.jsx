@@ -1,7 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
+import {styled} from 'styled-components';
 
-const ModalOverlay = styled.div`
+export const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -14,8 +13,8 @@ const ModalOverlay = styled.div`
   backdrop-filter: blur(2px);
 `;
 
-const ModalContent = styled.div`
-  background-color: #fff;
+export const ModalContent = styled.div`
+   background-color: #fff;
   padding: 40px 60px 40px 50px;
   width: 400px;
   height: 50%;
