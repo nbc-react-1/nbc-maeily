@@ -32,8 +32,8 @@ const FooterSpan = styled.span`
     height: 15px;
     padding: 8px;
     position: absolute;
-    top: 0;
-    left: 0;
+    top: -1px;
+    left: -1px;
     border-radius: 50%;
     background-color: #ffffff;
     transform: scale(0);
