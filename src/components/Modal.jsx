@@ -1,4 +1,4 @@
-import {styled} from 'styled-components';
+import { styled } from 'styled-components';
 
 export const ModalOverlay = styled.div`
   position: fixed;
@@ -14,10 +14,10 @@ export const ModalOverlay = styled.div`
 `;
 
 export const ModalContent = styled.div`
-   background-color: #fff;
+  background-color: #fff;
   padding: 40px 60px 40px 50px;
   width: 400px;
-  height: 50%;
+  height: 500px;
   border-radius: 12px;
 `;
 

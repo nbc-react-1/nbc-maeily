@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Modal from '../../components/Modal';
-
-const UserInfo = () => {
-  const userData = {
-    name: '전수정',
-    email: 'suzzjeon@example.com',
-    password: '********',
-  };
-
+import { useSelector } from 'react-redux';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { db } from '../../firebase';
+import { deleteUser, getAuth } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+const MyInfo = () => {
+  const Navigate = useNavigate();
+  const { storeInfo } = useSelector(state => state.userLogIn);
   const [isModalOpen, setModalOpen] = useState(false);
-
-  // const handleEdit = () => {
-  //   console.log('Edit button clicked');
-  // };
 
   const handleDelete = () => {
     console.log('Delete button clicked');
@@ -23,38 +19,57 @@ const UserInfo = () => {
     setModalOpen(!isModalOpen);
   };
 
+  const userDelete = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const pwd = prompt('회원 탈퇴를 위해 비밀번호를 입력해 주세요.');
+    if (pwd === storeInfo.password) {
+      const deleteConfirm = window.confirm('정말로 삭제하시겠습니까?');
+      if (deleteConfirm) {
+        await deleteDoc(doc(db, 'users', storeInfo.uid));
+        await deleteUser(user)
+          .then(() => {
+            alert('삭제가 정상적으로 처리되었습니다.');
+            Navigate('/');
+          })
+          .catch(error => {
+            const errorCode = error.code;
+            console.log('errorCode', errorCode);
+          });
+      } else alert('취소 하셨습니다.');
+    } else if (pwd === null) alert('취소 하셨습니다.');
+    else alert('비밀번호가 일치하지 않습니다.');
+  };
+
   return (
     <UserInfoContainer>
       <Heading>기본 회원 정보</Heading>
       <UserInfoItem>
-        <UserInfoLabel>Name:</UserInfoLabel>
-        <UserInfoValue>{userData.name}</UserInfoValue>
+        <UserInfoLabel>이름</UserInfoLabel>
+        <UserInfoValue>{storeInfo && storeInfo.name}</UserInfoValue>
       </UserInfoItem>
       <UserInfoItem>
-        <UserInfoLabel>Email:</UserInfoLabel>
-        <UserInfoValue>{userData.email}</UserInfoValue>
+        <UserInfoLabel>이메일</UserInfoLabel>
+        <UserInfoValue>{storeInfo && storeInfo.email}</UserInfoValue>
       </UserInfoItem>
       <UserInfoItem>
-        <UserInfoLabel>Password:</UserInfoLabel>
-        <UserInfoValue>{userData.password}</UserInfoValue>
+        <UserInfoLabel>닉네임</UserInfoLabel>
+        <UserInfoValue>{storeInfo && storeInfo.nickname}</UserInfoValue>
       </UserInfoItem>
       <ButtonContainer>
-        {/* <Button onClick={handleEdit}>정보 수정</Button> */}
-        <Button onClick={toggleModal}>회원 탈퇴</Button>
+        <Button onClick={userDelete}>회원 탈퇴</Button>
       </ButtonContainer>
-      {isModalOpen && (
+      {/* {isModalOpen && (
         <Modal onClose={toggleModal}>
           <h3>회원 탈퇴</h3>
           <p>잠시만요! 이대로 탈퇴하시면 저희는 망합니다. 정말 탈퇴하시겠어요? </p>
           <Button onClick={handleDelete}>탈퇴 진행</Button>
           <Button onClick={toggleModal}>회원 유지</Button>
         </Modal>
-      )}
+      )} */}
     </UserInfoContainer>
   );
 };
-
-export default UserInfo;
 
 const UserInfoContainer = styled.div`
   max-width: 600px;
@@ -118,3 +133,5 @@ const Button = styled.button`
   border: 1px solid rgb(20, 22, 23);
   color: rgb(20, 22, 23);
 `;
+
+export default MyInfo;

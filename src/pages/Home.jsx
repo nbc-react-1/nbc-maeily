@@ -1,34 +1,39 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { styled } from 'styled-components';
-import { StButton, ButtonWrap } from '../components/Button';
-import { getDocs, collection, addDoc, query, setDoc, doc } from 'firebase/firestore';
 import { auth, db, storage } from '../firebase';
+import { doc, getDocs, setDoc, addDoc, updateDoc, collection, query } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
+import { StButton, ButtonWrap } from '../components/Button';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
-import { useSelector } from 'react-redux';
-// import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-// import { doc, setDoc } from "firebase/firestore";
+
 // import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-// import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
   const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
+  const closeModal = () => {
+    setIsOpen(false);
+    setContents('');
+    setSelectedFile(null);
+  };
 
-  const [post, setPost] = useState([
-    {
-      id: 0,
-      image: 'url?',
-      contents: '내용입니다',
-    },
-    {
-      id: 1,
-      image: 'url?',
-      contents: '내용입니다',
-    },
-  ]);
+  const [post, setPost] = useState([]);
+
+  // 아이디 별로 객체로 저장???????
+  const dispatch = useDispatch();
+  const { sucessUserInfo, storeInfo, isUserTrue } = useSelector(state => state.userLogIn);
+
+  const updatePost = async () => {
+    const washingtonRef = doc(db, 'post-item', '필드명');
+
+    // Set the "capital" field of the city 'DC'
+    await updateDoc(washingtonRef, {
+      aa: [{ sfsdfd: 'sfsf' }, { sfsdf: 'sfsfsdf' }],
+    });
+  };
+
   // 데이터 리스트로 불러오기
   useEffect(() => {
     const initialPostItem = [];
@@ -41,16 +46,17 @@ const Home = () => {
           id: doc.id,
           ...doc.data(),
         };
-        console.log('data =>', data);
-        console.log('post =>', post);
         initialPostItem.push(data);
       });
       setPost(initialPostItem);
+
+      console.log(sucessUserInfo.name);
+      console.log(storeInfo);
+      console.log(isUserTrue);
     };
     fetchData();
   }, []);
 
-  // const { sucessUserInfo } = useSelector(state => state.userLogIn);
   const [contents, setContents] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -75,6 +81,8 @@ const Home = () => {
               break;
             case 'running':
               console.log('Upload is running');
+              break;
+            default:
               break;
           }
         },
@@ -157,6 +165,7 @@ const Home = () => {
                 <StButton type="submit" style={{ float: 'right' }}>
                   등록
                 </StButton>
+                <StButton onClick={updatePost}>update TEST</StButton>
               </form>
             </ModalContents>
           </ModalBg>
