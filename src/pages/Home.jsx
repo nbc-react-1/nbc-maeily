@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { StButton, ButtonWrap } from '../components/Button';
-import { getDocs, collection, addDoc, query } from 'firebase/firestore';
-import { app, auth, db, storage } from '../firebase';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { getDocs, collection, addDoc, query, setDoc, doc } from 'firebase/firestore';
+import { auth, db, storage } from '../firebase';
+import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
 import Navigation from '../components/Navigation';
+import Footer from '../components/Footer';
+import { useSelector } from 'react-redux';
+// import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+// import { doc, setDoc } from "firebase/firestore";
+// import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+// import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const Home = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
@@ -36,6 +42,7 @@ const Home = () => {
           ...doc.data(),
         };
         console.log('data =>', data);
+        console.log('post =>', post);
         initialPostItem.push(data);
       });
       setPost(initialPostItem);
@@ -43,33 +50,55 @@ const Home = () => {
     fetchData();
   }, []);
 
-  //게시글 등록
+  // const { sucessUserInfo } = useSelector(state => state.userLogIn);
   const [contents, setContents] = useState('');
-  const contentsOnchange = event => setContents(event.target.value);
   const [selectedFile, setSelectedFile] = useState(null);
+
   const selectFile = event => setSelectedFile(event.target.files[0]);
-  // 사진올리기
-  const addPost = async event => {
+  const contentsOnchange = event => setContents(event.target.value);
+
+  const addPostHandler = async event => {
     event.preventDefault();
-    const imageRef = ref(storage, `${auth.currentUser.uid}/${selectedFile.name}`);
-    await uploadBytes(imageRef, selectedFile);
-    const downloadURL = await getDownloadURL(imageRef);
-    console.log('downloadURL', downloadURL);
-  };
-  // 글올리기***********
-  const handlerPost = async event => {
-    event.preventDefault();
-    const newAddPost = {
-      imageUrl: addPost.downloadURL,
-      contents,
-    };
-    console.log(newAddPost);
-    // const newPostList = [...post, newAddPost];
-    // setPost(newPostList); //화면에 보여주는 추가
-    const collectionRef = collection(db, 'post-item');
-    await addDoc(collectionRef, newAddPost);
-    setSelectedFile(null);
-    setContents('');
+
+    try {
+      const storageRef = ref(storage, auth.currentUser.uid);
+      const uploadPost = uploadBytesResumable(storageRef, selectedFile);
+
+      uploadPost.on(
+        'state_changed',
+        snapshot => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log('Upload is ' + progress + '% done');
+          switch (snapshot.state) {
+            case 'paused':
+              console.log('Upload is paused');
+              break;
+            case 'running':
+              console.log('Upload is running');
+              break;
+          }
+        },
+        error => {
+          // Handle unsuccessful uploads
+        },
+        () => {
+          getDownloadURL(uploadPost.snapshot.ref).then(async downloadURL => {
+            const imageRef = ref(storage, `${auth.currentUser.uid}/${selectedFile.name}`);
+            await uploadBytes(imageRef, selectedFile);
+
+            const collectionRef = collection(db, 'post-item');
+            await addDoc(collectionRef, {
+              uid: auth.currentUser.uid,
+              contents,
+              photoURL: downloadURL,
+            });
+          });
+        },
+      );
+      closeModal();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -77,21 +106,25 @@ const Home = () => {
       {/* 상단 게시글 등록 버튼  */}
       <div>
         <Navigation />
-        <StBanner>
+        <Banner>
+          <div>
+            <h1>Title banner here</h1>
+          </div>
+          <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. </div>
           <button onClick={openModal}>글작성하기 일단여기 넣어둠요 ㅎㅎ</button>
-          <StH1>maeilyLook</StH1>
-        </StBanner>
+        </Banner>
         <StCardContainer>
           {post.map(item => {
             return (
               <StCard key={item.id}>
-                <StImg src="" alt={item.image} />
+                <StImg src={item.photoURL} />
                 <StId>{item.id}</StId>
                 <StContent>{item.contents}</StContent>
               </StCard>
             );
           })}
         </StCardContainer>
+        <Footer />
       </div>
 
       {/* modal */}
@@ -116,12 +149,12 @@ const Home = () => {
                 </StSvg>
               </StModalCloseButton>
 
-              <form onSubmit={handlerPost} style={{ clear: 'both', overflow: 'hidden' }}>
+              <form onSubmit={addPostHandler} style={{ clear: 'both', overflow: 'hidden' }}>
                 <Label>사진 첨부 </Label>
                 <Input type="file" onChange={selectFile} />
                 <Label>내용</Label>
                 <InputArea value={contents} onChange={contentsOnchange} />
-                <StButton type="submit" onClick={addPost} style={{ float: 'right' }}>
+                <StButton type="submit" style={{ float: 'right' }}>
                   등록
                 </StButton>
               </form>
@@ -133,20 +166,28 @@ const Home = () => {
   );
 };
 export default Home;
-const StBanner = styled.div`
-  background-color: #c4c4c4;
-  height: 200px;
-  border-bottom-left-radius: 15%;
-  border-bottom-right-radius: 15%;
+
+// banner
+const Banner = styled.div`
+  width: 100vw;
+  height: 600px;
+  background-color: #f4f5f9;
+  border-bottom-left-radius: 50px;
+  border-bottom-right-radius: 50px;
+  margin-bottom: 100px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
-  padding-right: 40px;
+  overflow: hidden;
+
+  & > div {
+    width: 50vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 `;
-const StH1 = styled.h1`
-  color: white;
-  font-size: 50px;
-`;
+
 // list style
 const StCardContainer = styled.div`
   display: flex;
