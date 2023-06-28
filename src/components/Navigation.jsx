@@ -142,9 +142,8 @@ const Navigation = () => {
       <h2 onClick={goToHome}>Logo</h2>
       <span>
         <span onClick={goToHome}>Home</span>
-        <span onClick={goToMypage}>Mypage</span>
+        {isUserTrue && <span onClick={goToMypage}>Mypage</span>}
       </span>
-
       <NavDiv>
         {isUserTrue ? <button onClick={userLogOut}>Log out</button> : <button onClick={goToLogIn}>Log In</button>}
         <JoinUserModal>Sign Up</JoinUserModal>

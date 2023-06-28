@@ -68,25 +68,19 @@ const JoinUserModal = () => {
     try {
       const matchName = query(collection(db, 'users'));
       const querySnapshot = await getDocs(matchName);
-
       const initialUsers = [];
       let overlapNickname;
-
       await querySnapshot.forEach(doc => {
         initialUsers.push({ id: doc.id, ...doc.data() });
         const nicknameArr = initialUsers.map(e => e.nickname);
         overlapNickname = nicknameArr.indexOf(nickname);
       });
-
       if (overlapNickname === -1 || overlapNickname === undefined) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const newUsers = { uid: userCredential.user.uid, email, password, nickname, name, profileImg: 'https://firebasestorage.googleapis.com/v0/b/maily-acc5a.appspot.com/o/default.png?alt=media&token=2b70c710-11c6-444b-a416-df5db34da880' };
-        await setDoc(doc(db, 'users', userCredential.user.uid), newUsers);
-        setEmail('');
-        setPassword('');
-        setname('');
-        setNickname('');
+        const newUsers = { uid: userCredential.user.uid, email, password, nickname, name, profileImg: 'https://em-content.zobj.net/thumbs/160/apple/81/dog-face_1f436.png' };
+        setDoc(doc(db, 'users', userCredential.user.uid), newUsers);
         if (userCredential) alert('회원가입이 정상적으로 처리되었습니다!');
+        closeModal();
       } else if (overlapNickname >= 0) {
         alert('이미 존재하는 닉네임 입니다. 다른 닉네임을 사용해 보세요!');
         nicknameRef.current.focus();
