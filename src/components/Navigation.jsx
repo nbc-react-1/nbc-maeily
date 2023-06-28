@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import JoinUserModal from './modal/JoinUserModal';
+
 const Navigation = () => {
   const navigation = useNavigate();
   const location = useLocation();
@@ -16,6 +17,7 @@ const Navigation = () => {
     navigation('/login');
   };
 
+
   const NavContainer = styled.div`
     width: 100vw;
     height: 60px;
@@ -28,7 +30,7 @@ const Navigation = () => {
     right: 0;
     z-index: 9999;
     color: ${location.pathname === '/login' ? 'white' : 'black'};
-
+ 
     & > h2 {
       font-weight: 900;
       font-size: 20px;
@@ -64,6 +66,7 @@ const Navigation = () => {
       cursor: pointer;
     }
   `;
+
   return (
     <NavContainer>
       <h2 onClick={goToHome}>Logo</h2>
