@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { styled } from 'styled-components';
 import { auth, db, storage } from '../firebase';
 import { getDocs, addDoc, collection, query } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { StButton, ButtonWrap } from '../components/Button';
+import { StButton } from '../components/Button';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import moment from 'moment/moment';
+import { createPortal } from 'react-dom';
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [post, setPost] = useState([]);
   const [contents, setContents] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-  const [edit, setEdit] = useState(false);
 
-  //리덕스 유저정보 .uid  //파이어스토어
+  //리덕스 유저정보 .uid   //파이어스토어
   const { sucessUserInfo, storeInfo, isUserTrue } = useSelector(state => state.userLogIn);
 
   const openModal = () => setIsOpen(true);
@@ -43,47 +43,6 @@ const Home = () => {
     };
     fetchData();
   }, []);
-
-  useEffect(() => {
-    const initialPostItem = [];
-    const fetchData = async () => {
-      const queryValue = query(collection(db, 'post-item'));
-      const querySnapshot = await getDocs(queryValue);
-      querySnapshot.forEach(doc => {
-        const data = {
-          id: doc.id,
-          ...doc.data(),
-        };
-        initialPostItem.push(data);
-      });
-      setPost(initialPostItem);
-    };
-    fetchData();
-  }, [post]);
-
-  // 게시글 등록
-  const selectFile = event => setSelectedFile(event.target.files[0]);
-  const contentsOnchange = event => setContents(event.target.value);
-
-  const addPostHandler = async event => {
-    event.preventDefault();
-    const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
-    const storageRef = ref(storage, `images/${selectedFile.name}`);
-
-    uploadBytes(storageRef, selectedFile).then(snapshot => {
-      getDownloadURL(storageRef).then(async url => {
-        const collectionRef = collection(db, 'post-item');
-        await addDoc(collectionRef, {
-          uid: auth.currentUser.uid,
-          contents,
-          photoURL: url,
-          date: nowTime,
-          // nickname: storeInfo.nickname,
-        });
-      });
-    });
-    closeModal();
-  };
 
   return (
     <div>
@@ -126,46 +85,75 @@ const Home = () => {
       </div>
 
       {/* modal */}
-      <div>
-        {isOpen && (
-          <ModalBg onClick={closeModal}>
-            <ModalContents
-              onClick={event => {
-                event.stopPropagation();
-              }}
-            >
-              {/* 수정페이지에서 보여줘야함 */}
-              {isUserTrue && (
-                <ButtonWrap style={{ float: 'right' }}>
-                  <StButton acColor={'#39ddc2'}>수정</StButton>
-                  <StButton acColor={'#39ddc2'}>삭제</StButton>
-                </ButtonWrap>
-              )}
-
-              {/* 모달 닫기 버튼 */}
-              <StModalCloseButton onClick={closeModal}>
-                <StSvg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
-                  <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z" />
-                </StSvg>
-              </StModalCloseButton>
-
-              <form onSubmit={addPostHandler} style={{ clear: 'both', overflow: 'hidden' }}>
-                <Label>사진 첨부 </Label>
-                <Input type="file" onChange={selectFile} />
-                <Label>내용</Label>
-                <InputArea value={contents} onChange={contentsOnchange} />
-                <StButton type="submit" style={{ float: 'right' }}>
-                  등록
-                </StButton>
-              </form>
-            </ModalContents>
-          </ModalBg>
-        )}
-      </div>
+      <PostModal isOpen={isOpen} closeModal={closeModal} selectedFile={selectedFile} setSelectedFile={setSelectedFile} contents={contents} setContents={setContents} />
     </div>
   );
 };
 
+function PostModal({ isOpen, closeModal, selectedFile, setSelectedFile, contents, setContents }) {
+  // 게시글 등록
+  const selectFile = event => setSelectedFile(event.target.files[0]);
+  const contentsOnchange = event => setContents(event.target.value);
+
+  const addPostHandler = async event => {
+    event.preventDefault();
+    const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
+    const storageRef = ref(storage, `${auth.currentUser.uid}/${selectedFile.name}`);
+
+    uploadBytes(storageRef, selectedFile).then(snapshot => {
+      getDownloadURL(storageRef).then(async url => {
+        const collectionRef = collection(db, 'post-item');
+        await addDoc(collectionRef, {
+          uid: auth.currentUser.uid,
+          contents,
+          photoURL: url,
+          date: nowTime,
+        });
+      });
+    });
+    closeModal();
+  };
+
+  return createPortal(
+    <div>
+      {isOpen && (
+        <ModalBg onClick={closeModal}>
+          <ModalContents
+            onClick={event => {
+              event.stopPropagation();
+            }}
+          >
+            {/* 수정페이지에서 보여줘야함 */}
+            {/* {isUserTrue && (
+                <ButtonWrap style={{ float: 'right' }}>
+                  <StButton acColor={'#39ddc2'}>수정</StButton>
+                  <StButton acColor={'#39ddc2'}>삭제</StButton>
+                </ButtonWrap>
+              )} */}
+
+            {/* 모달 닫기 버튼 */}
+            <StModalCloseButton onClick={closeModal}>
+              <StSvg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+                <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z" />
+              </StSvg>
+            </StModalCloseButton>
+
+            <form onSubmit={addPostHandler} style={{ clear: 'both', overflow: 'hidden' }}>
+              <Label>사진 첨부 </Label>
+              <Input type="file" onChange={selectFile} />
+              <Label>내용</Label>
+              <InputArea value={contents} onChange={contentsOnchange} />
+              <StButton type="submit" style={{ float: 'right' }}>
+                등록
+              </StButton>
+            </form>
+          </ModalContents>
+        </ModalBg>
+      )}
+    </div>,
+    document.getElementById('portal-root'),
+  );
+}
 export default Home;
 
 // banner
