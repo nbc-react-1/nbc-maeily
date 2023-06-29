@@ -93,9 +93,9 @@ const Home = () => {
           getDownloadURL(uploadPost.snapshot.ref).then(async downloadURL => {
             const imageRef = ref(storage, `${auth.currentUser.uid}/${selectedFile.name}`);
             await uploadBytes(imageRef, selectedFile);
-
-            const collectionRef = collection(db, 'post-item');
-            await addDoc(collectionRef, {
+            const newUsers = { uid: userCredential.user.uid, email, password, nickname, name, profileImg: 'https://em-content.zobj.net/thumbs/160/apple/81/dog-face_1f436.png' };
+            const collectionRef = collection(db,  'users', userCredential.user.uid), newUsers);
+            await setDoc(collectionRef, {
               uid: auth.currentUser.uid,
               contents,
               photoURL: downloadURL,
@@ -124,10 +124,14 @@ const Home = () => {
         <StCardContainer>
           {post.map(item => {
             return (
-              <StCard key={item.id}>
-                <StImg src={item.photoURL} />
-                <StId>{item.id}</StId>
-                <StContent>{item.contents}</StContent>
+              <StCard key={item.id} onClick={openModal}>
+                <StImg>
+                  <img src={item.photoURL} alt="" />
+                </StImg>
+                <StContents>
+                  <StId>{item.id}</StId>
+                  <StContent>{item.contents}</StContent>
+                </StContents>
               </StCard>
             );
           })}
@@ -145,10 +149,12 @@ const Home = () => {
               }}
             >
               {/* 수정페이지에서 보여줘야함 */}
-              {/* <ButtonWrap style={{ float: 'right' }}>
-              <StButton acColor={'#39ddc2'}>수정</StButton>
-              <StButton acColor={'#39ddc2'}>삭제</StButton>
-            </ButtonWrap> */}
+              {isUserTrue && (
+                <ButtonWrap style={{ float: 'right' }}>
+                  <StButton acColor={'#39ddc2'}>수정</StButton>
+                  <StButton acColor={'#39ddc2'}>삭제</StButton>
+                </ButtonWrap>
+              )}
 
               {/* 모달 닫기 버튼 */}
               <StModalCloseButton onClick={closeModal}>
@@ -165,7 +171,7 @@ const Home = () => {
                 <StButton type="submit" style={{ float: 'right' }}>
                   등록
                 </StButton>
-                <StButton onClick={updatePost}>update TEST</StButton>
+                {/* <StButton onClick={updatePost}>update TEST</StButton> */}
               </form>
             </ModalContents>
           </ModalBg>
@@ -210,25 +216,29 @@ const StCardContainer = styled.div`
 `;
 const StCard = styled.div`
   border: none;
-  width: 300px;
-  height: 500px;
+  width: calc((100% - 90px) / 4);
   cursor: pointer;
 `;
-const StImg = styled.img`
+const StImg = styled.div`
   width: 100%;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 10px;
+  overflow: hidden;
+  img {
+    width: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+  }
 `;
-const StId = styled.p`
-  margin-top: 10px;
+const StContents = styled.div`
+  padding: 20px 0;
+`;
+const StId = styled.h4`
+  padding: 5px 0;
   font-weight: bold;
   font-size: 20px;
 `;
 const StContent = styled.p`
-  margin-top: 10px;
-  font-weight: bold;
-  font-size: 15px;
+  padding: 5px 0;
+  font-size: 14px;
 `;
 
 // modal
