@@ -56,8 +56,8 @@ const MypageContainer = styled.div`
 `;
 
 const UserImage = styled.img`
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   margin-bottom: 2rem;
 `;

@@ -6,6 +6,7 @@ export const ButtonWrap = styled.div`
   gap: 10px;
   margin-bottom: 10px;
 `;
+
 export const StButton = styled.button`
   align-items: center;
   background-color: ${props => props.bgColor || '#000'};
