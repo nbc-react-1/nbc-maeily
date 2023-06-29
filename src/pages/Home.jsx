@@ -12,6 +12,13 @@ import Footer from '../components/Footer';
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [post, setPost] = useState([]);
+  const [contents, setContents] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [email, setEmail] = useState('');
+  //리덕스 유저정보 .uid   //파이어스토어
+  const { sucessUserInfo, storeInfo, isUserTrue } = useSelector(state => state.userLogIn);
+
   const openModal = () => setIsOpen(true);
   const closeModal = () => {
     setIsOpen(false);
@@ -19,53 +26,33 @@ const Home = () => {
     setSelectedFile(null);
   };
 
-  const [post, setPost] = useState([]);
-
-  // 아이디 별로 객체로 저장???????
-  const dispatch = useDispatch();
-  const { sucessUserInfo, storeInfo, isUserTrue } = useSelector(state => state.userLogIn);
-
-  const updatePost = async () => {
-    const washingtonRef = doc(db, 'post-item', '필드명');
-
-    // Set the "capital" field of the city 'DC'
-    await updateDoc(washingtonRef, {
-      aa: [{ sfsdfd: 'sfsf' }, { sfsdf: 'sfsfsdf' }],
-    });
-  };
-
   // 데이터 리스트로 불러오기
-  // useEffect(() => {
-  //   const initialPostItem = [];
-  //   const fetchData = async () => {
-  //     const queryValue = query(collection(db, 'post-item'));
-  //     const querySnapshot = await getDocs(queryValue);
+  useEffect(() => {
+    const initialPostItem = [];
+    const fetchData = async () => {
+      const queryValue = query(collection(db, 'post-item'));
+      const querySnapshot = await getDocs(queryValue);
+      querySnapshot.forEach(doc => {
+        const data = {
+          id: doc.id,
+          ...doc.data(),
+        };
+        initialPostItem.push(data);
+      });
+      setPost(initialPostItem);
+    };
+    fetchData();
+  }, []);
 
-  //     querySnapshot.forEach(doc => {
-  //       const data = {
-  //         id: doc.id,
-  //         ...doc.data(),
-  //       };
-  //       initialPostItem.push(data);
-  //     });
-  //     setPost(initialPostItem);
-
-  //     console.log(sucessUserInfo.name);
-  //     console.log(storeInfo);
-  //     console.log(isUserTrue);
-  //   };
-  //   fetchData();
-  // }, []);
-
-  const [contents, setContents] = useState('');
-  const [selectedFile, setSelectedFile] = useState(null);
+  console.log('sucessUserInfo', sucessUserInfo.uid);
+  console.log('storeInfo', storeInfo);
+  console.log('istrue', isUserTrue);
+  console.log('post', post);
 
   const selectFile = event => setSelectedFile(event.target.files[0]);
   const contentsOnchange = event => setContents(event.target.value);
-
   const addPostHandler = async event => {
     event.preventDefault();
-
     try {
       const storageRef = ref(storage, auth.currentUser.uid);
       const uploadPost = uploadBytesResumable(storageRef, selectedFile);
@@ -82,20 +69,43 @@ const Home = () => {
             case 'running':
               console.log('Upload is running');
               break;
-            default:
-              break;
           }
         },
         error => {
           // Handle unsuccessful uploads
         },
         () => {
+          // const collectionRef = collection(db, 'post-item');
+          // addDoc(collection)
+          // const fireField = doc(db, 'post-item', `${sucessUserInfo.uid}`, 'post');
+          // const fireField = doc(db('post-item'));
+
+          // await setDoc(fireField, {
+          //   uid: sucessUserInfo.uid,
+          //   contents,
+          //   photoURL: downloadURL,
+          // });
+
           getDownloadURL(uploadPost.snapshot.ref).then(async downloadURL => {
-            const imageRef = ref(storage, `${auth.currentUser.uid}/${selectedFile.name}`);
+            const imageRef = ref(storage, `${sucessUserInfo.uid}/${selectedFile.name}`);
             await uploadBytes(imageRef, selectedFile);
-            const newUsers = { uid: userCredential.user.uid, email, password, nickname, name, profileImg: 'https://em-content.zobj.net/thumbs/160/apple/81/dog-face_1f436.png' };
-            const collectionRef = collection(db,  'users', userCredential.user.uid), newUsers);
-            await setDoc(collectionRef, {
+
+            // const collectionRef = db.collection('post-item').doc(sucessUserInfo.uid).collection('post').doc('message1');
+            // const collectionRef = doc(db, 'post-item', sucessUserInfo.ui, 'post');
+            // await setDoc(doc(db, 'post-item', sucessUserInfo.uid, 'post'), {
+            // await setDoc(collectionRef, {
+            //   uid: auth.currentUser.uid,
+            //   contents,
+            //   photoURL: downloadURL,
+            // });
+            // await setDoc(collectionRef, { ...post,
+
+            //   //   uid: auth.currentUser.uid,
+            //   //   contents,
+            //   //   photoURL: downloadURL,
+            //   // });
+
+            await setDoc(doc(db, 'post-item', auth.currentUser.uid), {
               uid: auth.currentUser.uid,
               contents,
               photoURL: downloadURL,
@@ -108,7 +118,6 @@ const Home = () => {
       console.log(err);
     }
   };
-
   return (
     <div>
       {/* 상단 게시글 등록 버튼  */}
@@ -276,14 +285,17 @@ const StImg = styled.div`
   }
 `;
 const StContents = styled.div`
+  width: 100%;
   padding: 20px 0;
 `;
 const StId = styled.h4`
+  width: 100%;
   padding: 5px 0;
   font-weight: bold;
   font-size: 20px;
 `;
 const StContent = styled.p`
+  width: 100%;
   padding: 5px 0;
   font-size: 14px;
 `;
