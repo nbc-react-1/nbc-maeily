@@ -118,19 +118,19 @@ const Navigation = () => {
 
   const NavDiv = styled.div`
     position: absolute;
-    right: 10px;
+    right: 30px;
+    display: flex;
 
     & > button {
-      padding: 8px 15px;
-      margin: 5px;
-      border-radius: 17px;
+      padding: 10px 17px;
+      margin: 5px 10px;
+      border-radius: 5px;
       border: none;
-      background-color: #121212;
-      color: white;
-      font-weight: 600;
-      font-size: 13px;
       cursor: pointer;
-
+      font-weight: 700;
+      font-size: 13px;
+      color: #f4f5f9;
+      background-color: #121212;
       animation-duration: 0.3s;
       animation-timing-function: ease-in-out;
       animation-name: ${scrolled ? buttonToWhite : ''};

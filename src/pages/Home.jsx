@@ -35,27 +35,27 @@ const Home = () => {
   };
 
   // 데이터 리스트로 불러오기
-  useEffect(() => {
-    const initialPostItem = [];
-    const fetchData = async () => {
-      const queryValue = query(collection(db, 'post-item'));
-      const querySnapshot = await getDocs(queryValue);
+  // useEffect(() => {
+  //   const initialPostItem = [];
+  //   const fetchData = async () => {
+  //     const queryValue = query(collection(db, 'post-item'));
+  //     const querySnapshot = await getDocs(queryValue);
 
-      querySnapshot.forEach(doc => {
-        const data = {
-          id: doc.id,
-          ...doc.data(),
-        };
-        initialPostItem.push(data);
-      });
-      setPost(initialPostItem);
+  //     querySnapshot.forEach(doc => {
+  //       const data = {
+  //         id: doc.id,
+  //         ...doc.data(),
+  //       };
+  //       initialPostItem.push(data);
+  //     });
+  //     setPost(initialPostItem);
 
-      console.log(sucessUserInfo.name);
-      console.log(storeInfo);
-      console.log(isUserTrue);
-    };
-    fetchData();
-  }, []);
+  //     console.log(sucessUserInfo.name);
+  //     console.log(storeInfo);
+  //     console.log(isUserTrue);
+  //   };
+  //   fetchData();
+  // }, []);
 
   const [contents, setContents] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -115,11 +115,21 @@ const Home = () => {
       <div>
         <Navigation />
         <Banner>
+          <img src="https://user-images.githubusercontent.com/129598273/249545123-32c7c939-c760-4751-915a-a176a50f6cd6.png" alt="circle" />
+          <img src="https://user-images.githubusercontent.com/129598273/249548740-621cfb33-6f4e-4700-bb5c-cf4113381113.png" alt="circle" />
+
+          {/* <svg width="646" height="646" viewBox="0 0 646 646" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="200" cy="200" r="322.5" stroke="black" />
+          </svg> */}
+
           <div>
             <h1>Title banner here</h1>
+            <h1>Title banner here</h1>
+            <button onClick={openModal}>add photo</button>
           </div>
-          <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. </div>
-          <button onClick={openModal}>글작성하기 일단여기 넣어둠요 ㅎㅎ</button>
+          <BannerImg>
+            <img src="https://user-images.githubusercontent.com/129598273/249558941-2a814bad-dc14-40d7-a4ce-013c1a04234f.png" alt="banner" />
+          </BannerImg>
         </Banner>
         <StCardContainer>
           {post.map(item => {
@@ -188,13 +198,50 @@ const Banner = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
   overflow: hidden;
+
+  & > img:nth-child(1) {
+    position: absolute;
+    width: 500px;
+    right: 40px;
+    top: 40px;
+  }
+  & > img:nth-child(2) {
+    position: absolute;
+    width: 300px;
+    left: -30px;
+    top: 0px;
+  }
 
   & > div {
     width: 50vw;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+  }
+  & > div > h1 {
+    font-weight: 900;
+    font-size: 40px;
+  }
+
+  & > div > button {
+    border: 1px solid black;
+    padding: 10px 17px;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 13px;
+    color: #f4f5f9;
+    background-color: #121212;
+    margin-top: 40px;
+  }
+`;
+
+const BannerImg = styled.div`
+  & > img {
+    width: 300px;
+    z-index: 0;
   }
 `;
 
