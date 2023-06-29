@@ -30,7 +30,7 @@ const LogDiv = styled.div`
   }
   & > div:nth-child(2) {
     background-color: white;
-    width: 55vw;
+    width: 60vw;
     padding: 100px 30px;
     border-bottom-left-radius: 30px;
     border-top-left-radius: 30px;
@@ -51,15 +51,15 @@ const LogDiv = styled.div`
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      margin-top: 80px;
+      margin-top: 70px;
       gap: 15px;
       position: relative;
     }
 
     & > form > input {
-      width: 280px;
-      height: 30px;
-      padding: 5px;
+      width: 300px;
+      height: 40px;
+      padding: 10px;
       border-radius: 10px;
       border: 1px solid black;
       outline: none;
@@ -84,7 +84,7 @@ const LogDiv = styled.div`
       color: white;
       font-weight: 700;
       border-radius: 10px;
-      width: 280px;
+      width: 300px;
     }
   }
 `;
