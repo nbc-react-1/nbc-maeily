@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { styled } from 'styled-components';
 import { auth, db, storage } from '../firebase';
-import { doc, getDocs, setDoc, addDoc, updateDoc, collection, query } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
+import { getDocs, addDoc, collection, query } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { StButton, ButtonWrap } from '../components/Button';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
-
-// import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import moment from 'moment/moment';
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [post, setPost] = useState([]);
   const [contents, setContents] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-  const [email, setEmail] = useState('');
-  //리덕스 유저정보 .uid   //파이어스토어
+  const [edit, setEdit] = useState(false);
+
+  //리덕스 유저정보 .uid  //파이어스토어
   const { sucessUserInfo, storeInfo, isUserTrue } = useSelector(state => state.userLogIn);
 
   const openModal = () => setIsOpen(true);
@@ -44,80 +44,47 @@ const Home = () => {
     fetchData();
   }, []);
 
-  console.log('sucessUserInfo', sucessUserInfo.uid);
-  console.log('storeInfo', storeInfo);
-  console.log('istrue', isUserTrue);
-  console.log('post', post);
+  useEffect(() => {
+    const initialPostItem = [];
+    const fetchData = async () => {
+      const queryValue = query(collection(db, 'post-item'));
+      const querySnapshot = await getDocs(queryValue);
+      querySnapshot.forEach(doc => {
+        const data = {
+          id: doc.id,
+          ...doc.data(),
+        };
+        initialPostItem.push(data);
+      });
+      setPost(initialPostItem);
+    };
+    fetchData();
+  }, [post]);
 
+  // 게시글 등록
   const selectFile = event => setSelectedFile(event.target.files[0]);
   const contentsOnchange = event => setContents(event.target.value);
+
   const addPostHandler = async event => {
     event.preventDefault();
-    try {
-      const storageRef = ref(storage, auth.currentUser.uid);
-      const uploadPost = uploadBytesResumable(storageRef, selectedFile);
+    const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
+    const storageRef = ref(storage, `images/${selectedFile.name}`);
 
-      uploadPost.on(
-        'state_changed',
-        snapshot => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log('Upload is ' + progress + '% done');
-          switch (snapshot.state) {
-            case 'paused':
-              console.log('Upload is paused');
-              break;
-            case 'running':
-              console.log('Upload is running');
-              break;
-          }
-        },
-        error => {
-          // Handle unsuccessful uploads
-        },
-        () => {
-          // const collectionRef = collection(db, 'post-item');
-          // addDoc(collection)
-          // const fireField = doc(db, 'post-item', `${sucessUserInfo.uid}`, 'post');
-          // const fireField = doc(db('post-item'));
-
-          // await setDoc(fireField, {
-          //   uid: sucessUserInfo.uid,
-          //   contents,
-          //   photoURL: downloadURL,
-          // });
-
-          getDownloadURL(uploadPost.snapshot.ref).then(async downloadURL => {
-            const imageRef = ref(storage, `${sucessUserInfo.uid}/${selectedFile.name}`);
-            await uploadBytes(imageRef, selectedFile);
-
-            // const collectionRef = db.collection('post-item').doc(sucessUserInfo.uid).collection('post').doc('message1');
-            // const collectionRef = doc(db, 'post-item', sucessUserInfo.ui, 'post');
-            // await setDoc(doc(db, 'post-item', sucessUserInfo.uid, 'post'), {
-            // await setDoc(collectionRef, {
-            //   uid: auth.currentUser.uid,
-            //   contents,
-            //   photoURL: downloadURL,
-            // });
-            // await setDoc(collectionRef, { ...post,
-
-            //   //   uid: auth.currentUser.uid,
-            //   //   contents,
-            //   //   photoURL: downloadURL,
-            //   // });
-
-            await setDoc(doc(db, 'post-item', auth.currentUser.uid), {
-              uid: auth.currentUser.uid,
-              contents,
-              photoURL: downloadURL,
-            });
-          });
-        },
-      );
-      closeModal();
-    } catch (err) {
-      console.log(err);
-    }
+    uploadBytes(storageRef, selectedFile).then(snapshot => {
+      getDownloadURL(storageRef).then(async url => {
+        const collectionRef = collection(db, 'post-item');
+        await addDoc(collectionRef, {
+          uid: auth.currentUser.uid,
+          contents,
+          photoURL: url,
+          date: nowTime,
+          // nickname: storeInfo.nickname,
+        });
+      });
+    });
+    closeModal();
   };
+
   return (
     <div>
       {/* 상단 게시글 등록 버튼  */}
@@ -190,7 +157,6 @@ const Home = () => {
                 <StButton type="submit" style={{ float: 'right' }}>
                   등록
                 </StButton>
-                {/* <StButton onClick={updatePost}>update TEST</StButton> */}
               </form>
             </ModalContents>
           </ModalBg>
