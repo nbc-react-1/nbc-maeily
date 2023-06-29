@@ -103,6 +103,13 @@ const Login = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      onAuthStateChanged(auth, async user => {
+        if (user !== null) {
+          const docRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(docRef);
+          dispatch({ type: 'SUCESS_USER_LOGIN', payload: { user: user, store: docSnap.data() } });
+        }
+      });
       setLoadingBtn(false);
       navigation('/');
     } catch (error) {
