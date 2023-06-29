@@ -20,7 +20,6 @@ function App() {
         const docSnap = await getDoc(docRef);
         dispatch({ type: 'SUCESS_USER_LOGIN', payload: { user: user, store: docSnap.data() } });
       }
-      console.log('user', user); // 사용자 인증 정보가 변경될 때마다 해당 이벤트를 받아 처리합니다.
     });
   });
   return (

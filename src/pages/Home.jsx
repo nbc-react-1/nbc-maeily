@@ -1,17 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { styled } from 'styled-components';
 import { auth, db, storage } from '../firebase';
-import { doc, getDocs, setDoc, addDoc, updateDoc, collection, query } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
+import { getDocs, addDoc, collection, query } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { StButton, ButtonWrap } from '../components/Button';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
-
-// import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import moment from 'moment/moment';
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [post, setPost] = useState([]);
+  const [contents, setContents] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [edit, setEdit] = useState(false);
+
+  //리덕스 유저정보 .uid  //파이어스토어
+  const { sucessUserInfo, storeInfo, isUserTrue } = useSelector(state => state.userLogIn);
+
   const openModal = () => setIsOpen(true);
   const closeModal = () => {
     setIsOpen(false);
@@ -19,94 +26,63 @@ const Home = () => {
     setSelectedFile(null);
   };
 
-  const [post, setPost] = useState([]);
-
-  // 아이디 별로 객체로 저장???????
-  const dispatch = useDispatch();
-  const { sucessUserInfo, storeInfo, isUserTrue } = useSelector(state => state.userLogIn);
-
-  const updatePost = async () => {
-    const washingtonRef = doc(db, 'post-item', '필드명');
-
-    // Set the "capital" field of the city 'DC'
-    await updateDoc(washingtonRef, {
-      aa: [{ sfsdfd: 'sfsf' }, { sfsdf: 'sfsfsdf' }],
-    });
-  };
-
   // 데이터 리스트로 불러오기
-  // useEffect(() => {
-  //   const initialPostItem = [];
-  //   const fetchData = async () => {
-  //     const queryValue = query(collection(db, 'post-item'));
-  //     const querySnapshot = await getDocs(queryValue);
+  useEffect(() => {
+    const initialPostItem = [];
+    const fetchData = async () => {
+      const queryValue = query(collection(db, 'post-item'));
+      const querySnapshot = await getDocs(queryValue);
+      querySnapshot.forEach(doc => {
+        const data = {
+          id: doc.id,
+          ...doc.data(),
+        };
+        initialPostItem.push(data);
+      });
+      setPost(initialPostItem);
+    };
+    fetchData();
+  }, []);
 
-  //     querySnapshot.forEach(doc => {
-  //       const data = {
-  //         id: doc.id,
-  //         ...doc.data(),
-  //       };
-  //       initialPostItem.push(data);
-  //     });
-  //     setPost(initialPostItem);
+  useEffect(() => {
+    const initialPostItem = [];
+    const fetchData = async () => {
+      const queryValue = query(collection(db, 'post-item'));
+      const querySnapshot = await getDocs(queryValue);
+      querySnapshot.forEach(doc => {
+        const data = {
+          id: doc.id,
+          ...doc.data(),
+        };
+        initialPostItem.push(data);
+      });
+      setPost(initialPostItem);
+    };
+    fetchData();
+  }, [post]);
 
-  //     console.log(sucessUserInfo.name);
-  //     console.log(storeInfo);
-  //     console.log(isUserTrue);
-  //   };
-  //   fetchData();
-  // }, []);
-
-  const [contents, setContents] = useState('');
-  const [selectedFile, setSelectedFile] = useState(null);
-
+  // 게시글 등록
   const selectFile = event => setSelectedFile(event.target.files[0]);
   const contentsOnchange = event => setContents(event.target.value);
 
   const addPostHandler = async event => {
     event.preventDefault();
+    const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
+    const storageRef = ref(storage, `images/${selectedFile.name}`);
 
-    try {
-      const storageRef = ref(storage, auth.currentUser.uid);
-      const uploadPost = uploadBytesResumable(storageRef, selectedFile);
-
-      uploadPost.on(
-        'state_changed',
-        snapshot => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log('Upload is ' + progress + '% done');
-          switch (snapshot.state) {
-            case 'paused':
-              console.log('Upload is paused');
-              break;
-            case 'running':
-              console.log('Upload is running');
-              break;
-            default:
-              break;
-          }
-        },
-        error => {
-          // Handle unsuccessful uploads
-        },
-        () => {
-          getDownloadURL(uploadPost.snapshot.ref).then(async downloadURL => {
-            const imageRef = ref(storage, `${auth.currentUser.uid}/${selectedFile.name}`);
-            await uploadBytes(imageRef, selectedFile);
-
-            const collectionRef = collection(db, 'post-item');
-            await addDoc(collectionRef, {
-              uid: auth.currentUser.uid,
-              contents,
-              photoURL: downloadURL,
-            });
-          });
-        },
-      );
-      closeModal();
-    } catch (err) {
-      console.log(err);
-    }
+    uploadBytes(storageRef, selectedFile).then(snapshot => {
+      getDownloadURL(storageRef).then(async url => {
+        const collectionRef = collection(db, 'post-item');
+        await addDoc(collectionRef, {
+          uid: auth.currentUser.uid,
+          contents,
+          photoURL: url,
+          date: nowTime,
+          // nickname: storeInfo.nickname,
+        });
+      });
+    });
+    closeModal();
   };
 
   return (
@@ -134,10 +110,14 @@ const Home = () => {
         <StCardContainer>
           {post.map(item => {
             return (
-              <StCard key={item.id}>
-                <StImg src={item.photoURL} />
-                <StId>{item.id}</StId>
-                <StContent>{item.contents}</StContent>
+              <StCard key={item.id} onClick={openModal}>
+                <StImg>
+                  <img src={item.photoURL} alt="" />
+                </StImg>
+                <StContents>
+                  <StId>{item.id}</StId>
+                  <StContent>{item.contents}</StContent>
+                </StContents>
               </StCard>
             );
           })}
@@ -155,10 +135,12 @@ const Home = () => {
               }}
             >
               {/* 수정페이지에서 보여줘야함 */}
-              {/* <ButtonWrap style={{ float: 'right' }}>
-              <StButton acColor={'#39ddc2'}>수정</StButton>
-              <StButton acColor={'#39ddc2'}>삭제</StButton>
-            </ButtonWrap> */}
+              {isUserTrue && (
+                <ButtonWrap style={{ float: 'right' }}>
+                  <StButton acColor={'#39ddc2'}>수정</StButton>
+                  <StButton acColor={'#39ddc2'}>삭제</StButton>
+                </ButtonWrap>
+              )}
 
               {/* 모달 닫기 버튼 */}
               <StModalCloseButton onClick={closeModal}>
@@ -175,7 +157,6 @@ const Home = () => {
                 <StButton type="submit" style={{ float: 'right' }}>
                   등록
                 </StButton>
-                <StButton onClick={updatePost}>update TEST</StButton>
               </form>
             </ModalContents>
           </ModalBg>
@@ -257,25 +238,32 @@ const StCardContainer = styled.div`
 `;
 const StCard = styled.div`
   border: none;
-  width: 300px;
-  height: 500px;
+  width: calc((100% - 90px) / 4);
   cursor: pointer;
 `;
-const StImg = styled.img`
+const StImg = styled.div`
   width: 100%;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 10px;
+  overflow: hidden;
+  img {
+    width: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+  }
 `;
-const StId = styled.p`
-  margin-top: 10px;
+const StContents = styled.div`
+  width: 100%;
+  padding: 20px 0;
+`;
+const StId = styled.h4`
+  width: 100%;
+  padding: 5px 0;
   font-weight: bold;
   font-size: 20px;
 `;
 const StContent = styled.p`
-  margin-top: 10px;
-  font-weight: bold;
-  font-size: 15px;
+  width: 100%;
+  padding: 5px 0;
+  font-size: 14px;
 `;
 
 // modal
