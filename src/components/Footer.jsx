@@ -10,9 +10,22 @@ const FooterContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  & > h1 {
+    font-weight: 600;
+    font-size: 25px;
+    margin: 30px;
+  }
+
+  & > p {
+    font-weight: 500;
+    margin: 3px;
+  }
 `;
 
 const FooterSpan = styled.span`
+  margin-top: 20px;
+
   & > span {
     width: 30px;
     height: 30px;
@@ -53,9 +66,9 @@ const Footer = () => {
   return (
     <FooterContainer>
       <h1>Footer</h1>
-      <p>adasdadasdasadd</p>
-      <p>adasdadasdasaasdaddd</p>
-      <p>adasdadasdasadd</p>
+      <p> simply dummy text of the printing</p>
+      <p>You also can edit .git/config</p>
+      <p>You're not in any danger of losing history</p>
       <FooterSpan>
         <span>
           <img src="https://raw.githubusercontent.com/judygab/web-dev-projects/6bf5a12767154a7383288450bb441d04f7c0dce9/personal-portfolio/src/assets/img/nav-icon1.svg" alt="footer" />

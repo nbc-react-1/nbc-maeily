@@ -210,11 +210,12 @@ const JoinUserModal = () => {
 const OpenModalButton = styled.button`
   padding: 10px;
   margin: 5px;
-  border-radius: 20px;
+  border-radius: 5px;
   border: none;
-  background-color: black;
-  color: white;
+  color: #f4f5f9;
+  background-color: #121212;
   font-weight: 700;
+  font-size: 13px;
   cursor: pointer;
 `;
 
