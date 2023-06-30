@@ -42,7 +42,7 @@ const JoinUserModal = () => {
   };
   // 닉네임 유효성 검사
   const nicknameCheck = nickname => {
-    if (nickname.length>=2&&nickname.length<=16) setCheckNickname(true);
+    if (nickname.length >= 2 && nickname.length <= 16) setCheckNickname(true);
     else setCheckNickname(false);
   };
 
@@ -80,7 +80,8 @@ const JoinUserModal = () => {
       });
       if (overlapNickname === -1 || overlapNickname === undefined) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const newUsers = { uid: userCredential.user.uid, email, password, nickname, name, profileImg: 'https://em-content.zobj.net/thumbs/160/apple/81/dog-face_1f436.png' };
+        console.log('userCredential', userCredential);
+        const newUsers = { uid: userCredential.user.uid, email, password, nickname, name, profileImg: 'https://firebasestorage.googleapis.com/v0/b/maily-acc5a.appspot.com/o/default.png?alt=media&token=2b70c710-11c6-444b-a416-df5db34da880' };
         setDoc(doc(db, 'users', userCredential.user.uid), newUsers);
         if (userCredential) alert('회원가입이 정상적으로 처리되었습니다!');
         closeModal();
@@ -94,7 +95,7 @@ const JoinUserModal = () => {
       emailRef.current.focus();
     }
   };
- 
+
   return (
     <div>
       <OpenModalButton onClick={openModal}>Sign Up</OpenModalButton>
