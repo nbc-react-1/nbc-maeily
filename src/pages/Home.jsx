@@ -34,28 +34,6 @@ const Home = () => {
     });
   };
 
-  // 데이터 리스트로 불러오기
-  // useEffect(() => {
-  //   const initialPostItem = [];
-  //   const fetchData = async () => {
-  //     const queryValue = query(collection(db, 'post-item'));
-  //     const querySnapshot = await getDocs(queryValue);
-
-  //     querySnapshot.forEach(doc => {
-  //       const data = {
-  //         id: doc.id,
-  //         ...doc.data(),
-  //       };
-  //       initialPostItem.push(data);
-  //     });
-  //     setPost(initialPostItem);
-
-  //     console.log(sucessUserInfo.name);
-  //     console.log(storeInfo);
-  //     console.log(isUserTrue);
-  //   };
-  //   fetchData();
-  // }, []);
 
   const [contents, setContents] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
