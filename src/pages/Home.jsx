@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import { styled } from 'styled-components';
 import { db } from '../firebase';
 import { getDocs, collection, query } from 'firebase/firestore';
@@ -14,7 +14,7 @@ const Home = () => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   //리덕스 유저정보 .uid   //파이어스토어
-  const { sucessUserInfo, storeInfo, isUserTrue } = useSelector(state => state.userLogIn);
+  // const { sucessUserInfo, storeInfo, isUserTrue } = useSelector(state => state.userLogIn);
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => {
@@ -24,6 +24,22 @@ const Home = () => {
   };
 
   // 데이터 리스트로 불러오기
+  // useEffect(() => {
+  //   const initialPostItem = [];
+  //   const fetchData = async () => {
+  //     const queryValue = query(collection(db, 'post-item'));
+  //     const querySnapshot = await getDocs(queryValue);
+  //     querySnapshot.forEach(doc => {
+  //       const data = {
+  //         id: doc.id,
+  //         ...doc.data(),
+  //       };
+  //       initialPostItem.push(data);
+  //     });
+  //     setPost(initialPostItem);
+  //   };
+  //   fetchData();
+  // }, []);
   useEffect(() => {
     const initialPostItem = [];
     const fetchData = async () => {
@@ -39,7 +55,7 @@ const Home = () => {
       setPost(initialPostItem);
     };
     fetchData();
-  }, []);
+  }, [post]);
 
   return (
     <div>

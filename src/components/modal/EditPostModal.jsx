@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import moment from 'moment/moment';
 import { createPortal } from 'react-dom';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { addDoc, collection } from 'firebase/firestore';
 import { auth, db, storage } from '../../firebase';
-import { StButton } from '../Button';
+import { ButtonWrap, StButton } from '../Button';
+import { useSelector } from 'react-redux';
 
-function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, contents, setContents }) {
+function EditPostModal({ isOpen, closeModal, selectedFile, setSelectedFile, contents, setContents, isUserTrue }) {
   // 게시글 등록
+
+  const { storeInfo } = useSelector(state => state.userLogIn);
+  console.log(post);
+
   const selectFile = event => setSelectedFile(event.target.files[0]);
   const contentsOnchange = event => setContents(event.target.value);
 
@@ -30,7 +35,6 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
     });
     closeModal();
   };
-
   return createPortal(
     <div>
       {isOpen && (
@@ -40,6 +44,7 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
               event.stopPropagation();
             }}
           >
+            <StPostH2>게시글 수정</StPostH2>
             {/* 모달 닫기 버튼 */}
             <StModalCloseButton onClick={closeModal}>
               <StSvg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
@@ -63,8 +68,12 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
     document.getElementById('portal-root'),
   );
 }
-export default CreatePostModal;
-
+export default EditPostModal;
+const StPostH2 = styled.h2`
+  font-weight: bold;
+  font-size: 1.4rem;
+  margin: 0 0 20px 0;
+`;
 // modal
 const ModalBg = styled.div`
   width: 100%;
@@ -122,8 +131,13 @@ const InputArea = styled.textarea`
   border-radius: 5px;
   margin-bottom: 25px;
 `;
+// Button
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+`;
 
-// button
 const Button = styled.button`
   padding: 10px 22px;
   cursor: pointer;
