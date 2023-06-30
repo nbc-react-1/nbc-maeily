@@ -11,7 +11,6 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
   // 게시글 등록
   const selectFile = event => setSelectedFile(event.target.files[0]);
   const contentsOnchange = event => setContents(event.target.value);
-
   const addPostHandler = async event => {
     event.preventDefault();
     const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
