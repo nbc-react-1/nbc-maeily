@@ -10,16 +10,20 @@ const Navigation = () => {
   const dispatch = useDispatch();
   const { isUserTrue, sucessUserInfo, storeInfo } = useSelector(state => state.userLogIn);
   const goToHome = () => {
+    console.log('goToHome');
     navigation('/');
   };
   const goToMypage = () => {
+    console.log('goToMypage');
     navigation('/mypage');
   };
   const goToLogIn = () => {
+    console.log('goToLogIn');
     navigation('/login');
   };
   const userLogOut = async e => {
     e.preventDefault();
+    console.log('userLogOut');
     await signOut(auth);
     dispatch({ type: 'LOGOUT_USER' });
     navigation('/');
@@ -32,8 +36,13 @@ const Navigation = () => {
         {isUserTrue && <span onClick={goToMypage}>Mypage</span>}
       </span>
       <NavDiv>
-        {isUserTrue ? <button onClick={userLogOut}>Log out</button> : <button onClick={goToLogIn}>Log In</button>}
-        <JoinUserModal>Sign Up</JoinUserModal>
+        {isUserTrue ? (
+          <button onClick={userLogOut}>Log out</button>
+        ) : (
+          <>
+            <button onClick={goToLogIn}>Log In</button> <JoinUserModal>Sign Up</JoinUserModal>
+          </>
+        )}
       </NavDiv>
     </NavContainer>
   );
@@ -96,7 +105,7 @@ const NavDiv = styled.div`
     cursor: pointer;
     font-weight: 700;
     font-size: 13px;
-    color: #F4F5F9;
+    color: #f4f5f9;
     background-color: #121212;
   }
 `;

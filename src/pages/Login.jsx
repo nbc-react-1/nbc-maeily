@@ -97,18 +97,12 @@ const Login = () => {
 
   const handleSignIn = async e => {
     e.preventDefault();
+    console.log('handleSignIn');
     setLoadingBtn(true);
     const email = e.target[0].value;
     const password = e.target[1].value;
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      onAuthStateChanged(auth, async user => {
-        if (user !== null) {
-          const docRef = doc(db, 'users', user.uid);
-          const docSnap = await getDoc(docRef);
-          dispatch({ type: 'SUCESS_USER_LOGIN', payload: { user: user, store: docSnap.data() } });
-        }
-      });
       setLoadingBtn(false);
       navigation('/');
     } catch (error) {
@@ -118,6 +112,7 @@ const Login = () => {
   };
 
   const handlePassword = () => {
+    console.log('handlePassword');
     const email = prompt('email');
     sendPasswordResetEmail(auth, email)
       .then(a => {

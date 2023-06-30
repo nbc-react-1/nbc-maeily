@@ -47,6 +47,7 @@ const MyInfo = () => {
     setChangeNickname('');
     setCheckNickname(false);
     setChangeFile('');
+    setOverlapNickname('');
   };
 
   // 회원정보수정 로직
@@ -56,19 +57,19 @@ const MyInfo = () => {
     const userAllInfo = [];
     await querySnapshot.forEach(doc => {
       userAllInfo.push({ id: doc.id, ...doc.data() });
-      console.log("userAllInfo",userAllInfo)
       const nicknameArr = userAllInfo.map(e => e.nickname);
       setOverlapNickname(nicknameArr.indexOf(changeNickname));
     });
-    if(overlapNickname === -1){
+    console.log('userAllInfo', userAllInfo);
+    if (overlapNickname === -1) {
       const imageRef = ref(storage, `${auth.currentUser.uid}/${changeFile.name}`);
-    await uploadBytes(imageRef, changeFile);
-    const downloadURL = await getDownloadURL(imageRef);
-    const userRef = doc(db, 'users', storeInfo.uid);
-    await updateDoc(userRef, changeFile === '' ? { nickname: changeNickname } : { nickname: changeNickname, profileImg: downloadURL });
-    alert('회원 정보가 성공적으로 업데이트 되었습니다.');
-    window.location.reload()
-    }else if (overlapNickname >= 0) {
+      await uploadBytes(imageRef, changeFile);
+      const downloadURL = await getDownloadURL(imageRef);
+      const userRef = doc(db, 'users', storeInfo.uid);
+      await updateDoc(userRef, changeFile === '' ? { nickname: changeNickname } : { nickname: changeNickname, profileImg: downloadURL });
+      alert('회원 정보가 성공적으로 업데이트 되었습니다.');
+      window.location.reload();
+    } else if (overlapNickname >= 0) {
       alert('이미 존재하는 닉네임 입니다. 다른 닉네임을 사용해 보세요!');
     }
   };
@@ -228,7 +229,7 @@ const MyInfo = () => {
           </InputContainer>
           <FlexContainer>
             <Button onClick={userInfoUpdate} disabled={!checkNickname}>
-            변경
+              변경
             </Button>
             <Button onClick={closeUserInfoModal}>취소</Button>
           </FlexContainer>
