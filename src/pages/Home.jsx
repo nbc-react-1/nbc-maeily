@@ -42,23 +42,6 @@ const Home = () => {
       setPost(initialPostItem);
     };
     fetchData();
-  }, []);
-
-  useEffect(() => {
-    const initialPostItem = [];
-    const fetchData = async () => {
-      const queryValue = query(collection(db, 'post-item'));
-      const querySnapshot = await getDocs(queryValue);
-      querySnapshot.forEach(doc => {
-        const data = {
-          id: doc.id,
-          ...doc.data(),
-        };
-        initialPostItem.push(data);
-      });
-      setPost(initialPostItem);
-    };
-    fetchData();
   }, [post]);
 
   // 게시글 등록

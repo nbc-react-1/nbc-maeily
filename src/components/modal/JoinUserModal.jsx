@@ -23,7 +23,6 @@ const JoinUserModal = () => {
   const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
   const passwordRegEx = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,16}$/;
   const nameRegEx = /^(?=.*[a-zA-Z가-힣])[a-zA-Z가-힣]{2,16}$/;
-  const nicknameRegEx = /^(?=.*[a-zA-Z0-9가-힣])[a-zA-Z0-9가-힣]{3,16}$/;
 
   // 검사 전부 true 시 '가입하기' 버튼 활성화(disabled = false)
   // 이메일 유효성 검사
@@ -43,7 +42,7 @@ const JoinUserModal = () => {
   };
   // 닉네임 유효성 검사
   const nicknameCheck = nickname => {
-    if (nicknameRegEx.test(nickname)) setCheckNickname(true);
+    if (nickname.length>=2&&nickname.length<=16) setCheckNickname(true);
     else setCheckNickname(false);
   };
 
@@ -60,6 +59,10 @@ const JoinUserModal = () => {
     setPassword('');
     setname('');
     setNickname('');
+    setCheckEmail('');
+    setCheckPassword('');
+    setCheckname('');
+    setCheckNickname('');
   };
 
   // 회원가입 유효성 검사 후 처리
@@ -91,7 +94,7 @@ const JoinUserModal = () => {
       emailRef.current.focus();
     }
   };
-
+ 
   return (
     <div>
       <OpenModalButton onClick={openModal}>Sign Up</OpenModalButton>
@@ -122,12 +125,14 @@ const JoinUserModal = () => {
                     autoFocus
                   />
                 </div>
-                {checkEmail === true || email === '' ? (
+                {checkEmail === true ? (
+                  <StP style={checkTrueColor}>사용 가능한 이메일입니다.</StP>
+                ) : email !== '' ? (
+                  <StP>이메일 주소를 정확히 입력해주세요.</StP>
+                ) : (
                   <StP>
                     <br />
                   </StP>
-                ) : (
-                  <StP>이메일 주소를 정확히 입력해주세요.</StP>
                 )}
               </div>
               <div>
@@ -143,21 +148,21 @@ const JoinUserModal = () => {
                     }}
                   />
                 </div>
-                {checkPassword === true || password === '' ? (
+                {checkPassword === true ? (
+                  <StP style={checkTrueColor}>사용 가능한 비밀번호입니다.</StP>
+                ) : password !== '' ? (
+                  <StP>영문, 숫자, 특수문자를 조합하여 8-16자 로 입력해주세요.</StP>
+                ) : (
                   <StP>
                     <br />
                   </StP>
-                ) : (
-                  <StP>영문, 숫자, 특수문자를 조합하여 8-16자 로 입력해주세요.</StP>
                 )}
               </div>
-
               <div>
                 <StLabel>이름</StLabel>
                 <div>
                   <StInput
                     type="text"
-                    placeholder="2자 이상의 영어, 한글로 구성"
                     value={name}
                     onChange={e => {
                       setname(e.target.value);
@@ -165,12 +170,14 @@ const JoinUserModal = () => {
                     }}
                   />
                 </div>
-                {checkname === true || name === '' ? (
+                {checkname === true ? (
+                  <StP style={checkTrueColor}>사용 가능한 이름입니다.</StP>
+                ) : name !== '' ? (
+                  <StP>2자 이상 16자 내 영어, 한글로 구성해주세요.</StP>
+                ) : (
                   <StP>
                     <br />
                   </StP>
-                ) : (
-                  <StP>2자 이상의 영어, 한글로 구성해주세요.</StP>
                 )}
               </div>
 
@@ -179,7 +186,6 @@ const JoinUserModal = () => {
                 <div>
                   <StInput
                     type="text"
-                    placeholder="3자 이상의 영어, 숫자, 한글로 구성"
                     value={nickname}
                     onChange={e => {
                       setNickname(e.target.value);
@@ -188,12 +194,14 @@ const JoinUserModal = () => {
                     ref={nicknameRef}
                   />
                 </div>
-                {checkNickname === true || nickname === '' ? (
+                {checkNickname === true ? (
+                  <StP style={checkTrueColor}>사용 가능한 닉네임입니다.</StP>
+                ) : nickname !== '' ? (
+                  <StP>2자 이상 16자 내로 입력해 주세요.</StP>
+                ) : (
                   <StP>
                     <br />
                   </StP>
-                ) : (
-                  <StP>3자 이상의 영어, 숫자, 한글로 구성해주세요.</StP>
                 )}
               </div>
             </form>
@@ -205,6 +213,9 @@ const JoinUserModal = () => {
       )}
     </div>
   );
+};
+export const checkTrueColor = {
+  color: '#14aaff',
 };
 
 const OpenModalButton = styled.button`
@@ -236,15 +247,15 @@ const StModalHeader = styled.div`
   justify-content: space-between;
   padding-bottom: 20px;
 `;
-const ModalCloseButton = styled.button`
+export const ModalCloseButton = styled.button`
   background-color: transparent;
   font-size: 38px;
   position: relative;
   top: -48px;
-  left: 19%;
+  left: 20%;
   height: 40px;
 `;
-const CloseButtonSvg = styled.svg`
+export const CloseButtonSvg = styled.svg`
   fill: #7c7c7c;
   transition: scale 0.3s;
   &:hover {
@@ -271,7 +282,7 @@ const StLabel = styled.h2`
   margin: 8px;
   font-size: 13px;
 `;
-const StP = styled(StLabel)`
+export const StP = styled(StLabel)`
   color: red;
 `;
 

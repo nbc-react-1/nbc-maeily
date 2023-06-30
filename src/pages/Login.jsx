@@ -100,7 +100,6 @@ const Login = () => {
     setLoadingBtn(true);
     const email = e.target[0].value;
     const password = e.target[1].value;
-
     try {
       await signInWithEmailAndPassword(auth, email, password);
       onAuthStateChanged(auth, async user => {

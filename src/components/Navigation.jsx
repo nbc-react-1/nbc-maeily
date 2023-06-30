@@ -5,12 +5,10 @@ import JoinUserModal from './modal/JoinUserModal';
 import { useSelector, useDispatch } from 'react-redux';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
-
 const Navigation = () => {
   const navigation = useNavigate();
   const dispatch = useDispatch();
   const { isUserTrue, sucessUserInfo, storeInfo } = useSelector(state => state.userLogIn);
-
   const goToHome = () => {
     navigation('/');
   };
@@ -20,14 +18,12 @@ const Navigation = () => {
   const goToLogIn = () => {
     navigation('/login');
   };
-
   const userLogOut = async e => {
     e.preventDefault();
     await signOut(auth);
     dispatch({ type: 'LOGOUT_USER' });
     navigation('/');
   };
-
   return (
     <NavContainer>
       <h2 onClick={goToHome}>Logo</h2>
@@ -42,7 +38,6 @@ const Navigation = () => {
     </NavContainer>
   );
 };
-
 const NavContainer = styled.div`
   width: 100vw;
   height: 60px;
@@ -54,7 +49,6 @@ const NavContainer = styled.div`
   left: 0;
   right: 0;
   z-index: 9999;
-
   & > h2 {
     font-weight: 900;
     font-size: 20px;
@@ -90,12 +84,10 @@ const NavContainer = styled.div`
     cursor: pointer;
   }
 `;
-
 const NavDiv = styled.div`
   position: absolute;
   right: 30px;
   display: flex;
-
   & > button {
     padding: 10px 17px;
     margin: 5px 10px;
@@ -104,7 +96,7 @@ const NavDiv = styled.div`
     cursor: pointer;
     font-weight: 700;
     font-size: 13px;
-    color: #f4f5f9;
+    color: #F4F5F9;
     background-color: #121212;
   }
 `;
