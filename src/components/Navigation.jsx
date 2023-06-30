@@ -29,11 +29,11 @@ const Navigation = () => {
       <h2 onClick={goToHome}>Logo</h2>
       <span>
         <span onClick={goToHome}>Home</span>
-        {isUserTrue && <span onClick={goToMypage}>MyPage</span>}
+        {isUserTrue && <span onClick={goToMypage}>Mypage</span>}
       </span>
       <NavDiv>
         {isUserTrue ? <button onClick={userLogOut}>Log out</button> : <button onClick={goToLogIn}>Log In</button>}
-        {!isUserTrue &&<JoinUserModal>Sign Up</JoinUserModal>}
+        <JoinUserModal>Sign Up</JoinUserModal>
       </NavDiv>
     </NavContainer>
   );

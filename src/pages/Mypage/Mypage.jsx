@@ -19,7 +19,10 @@ const Mypage = () => {
     <>
       <Navigation />
       <MypageContainer>
-        <UserImage src={profileImg} alt="User Image" />
+        <ImageWrap>
+          <UserImage src={profileImg} alt="User Image" />
+        </ImageWrap>
+
         <UserName>{nickname}</UserName>
         <NavigationText>
           <span onClick={() => handleTabChange('info')}>회원정보 보기</span> | <span onClick={() => handleTabChange('posts')}>내가 쓴 게시글</span>
@@ -51,12 +54,16 @@ const MypageContainer = styled.div`
   align-items: center;
   padding: 1rem;
 `;
-
-const UserImage = styled.img`
+const ImageWrap = styled.div`
   width: 200px;
   height: 200px;
   border-radius: 50%;
+  overflow: hidden;
   margin-bottom: 2rem;
+`;
+const UserImage = styled.img`
+  width: 100%;
+  object-fit: cover;
 `;
 
 const UserName = styled.h2`
