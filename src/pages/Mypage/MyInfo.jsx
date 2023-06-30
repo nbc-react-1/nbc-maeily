@@ -10,6 +10,7 @@ import { uploadBytes, ref, getDownloadURL } from 'firebase/storage';
 import { StP } from '../../components/modal/JoinUserModal';
 import { checkTrueColor } from '../../components/modal/JoinUserModal';
 import { useDispatch } from 'react-redux';
+
 const MyInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -24,7 +25,6 @@ const MyInfo = () => {
   const [passwordType, setPasswordType] = useState(true);
   const [passwordType2, setPasswordType2] = useState(true);
   const [passwordType3, setPasswordType3] = useState(true);
-  const [overlapNickname, setOverlapNickname] = useState('');
   const { storeInfo } = useSelector(state => state.userLogIn);
 
   // 설정 모달 열기
@@ -54,17 +54,22 @@ const MyInfo = () => {
     const matchName = query(collection(db, 'users'));
     const querySnapshot = await getDocs(matchName);
     const userAllInfo = [];
+    let overlapNickname;
     await querySnapshot.forEach(doc => {
       userAllInfo.push({ id: doc.id, ...doc.data() });
       console.log("userAllInfo",userAllInfo)
       const nicknameArr = userAllInfo.map(e => e.nickname);
-      setOverlapNickname(nicknameArr.indexOf(changeNickname));
+      console.log("storeInfo.nickname",storeInfo.nickname, typeof storeInfo.nickname) 
+      console.log("changeNickname",changeNickname, typeof changeNickname)
+      console.log("nicknameArr",nicknameArr)
+      overlapNickname = storeInfo.nickname === changeNickname ? -1 : nicknameArr.indexOf(changeNickname);
     });
+ 
     if(overlapNickname === -1){
       const imageRef = ref(storage, `${auth.currentUser.uid}/${changeFile.name}`);
-    await uploadBytes(imageRef, changeFile);
-    const downloadURL = await getDownloadURL(imageRef);
-    const userRef = doc(db, 'users', storeInfo.uid);
+      await uploadBytes(imageRef, changeFile);
+      const downloadURL = await getDownloadURL(imageRef);
+      const userRef = doc(db, 'users', storeInfo.uid);
     await updateDoc(userRef, changeFile === '' ? { nickname: changeNickname } : { nickname: changeNickname, profileImg: downloadURL });
     alert('회원 정보가 성공적으로 업데이트 되었습니다.');
     window.location.reload()
