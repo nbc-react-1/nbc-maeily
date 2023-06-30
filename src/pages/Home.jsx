@@ -152,7 +152,7 @@ const BannerImg = styled.div`
     bottom: -20px;
   }
   & > span img:nth-child(2) {
-    width: 300pxq;
+    width: 300px;
     z-index: 0;
     position: relative;
   }
