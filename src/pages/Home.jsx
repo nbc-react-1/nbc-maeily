@@ -12,6 +12,7 @@ const Home = () => {
   const [post, setPost] = useState([]);
   const [contents, setContents] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [reload, setReload] = useState(false);
 
   //리덕스 유저정보 .uid   //파이어스토어
   // const { sucessUserInfo, storeInfo, isUserTrue } = useSelector(state => state.userLogIn);
@@ -24,23 +25,9 @@ const Home = () => {
   };
 
   // 데이터 리스트로 불러오기
-  // useEffect(() => {
-  //   const initialPostItem = [];
-  //   const fetchData = async () => {
-  //     const queryValue = query(collection(db, 'post-item'));
-  //     const querySnapshot = await getDocs(queryValue);
-  //     querySnapshot.forEach(doc => {
-  //       const data = {
-  //         id: doc.id,
-  //         ...doc.data(),
-  //       };
-  //       initialPostItem.push(data);
-  //     });
-  //     setPost(initialPostItem);
-  //   };
-  //   fetchData();
-  // }, []);
   useEffect(() => {
+    console.log('Home useEffect');
+    console.log(reload, 'reload');
     const initialPostItem = [];
     const fetchData = async () => {
       const queryValue = query(collection(db, 'post-item'));
@@ -55,7 +42,7 @@ const Home = () => {
       setPost(initialPostItem);
     };
     fetchData();
-  }, [post]);
+  }, [reload]);
 
   return (
     <div>
@@ -65,24 +52,22 @@ const Home = () => {
         <Banner>
           <img src="https://user-images.githubusercontent.com/129598273/249545123-32c7c939-c760-4751-915a-a176a50f6cd6.png" alt="circle" />
           <img src="https://user-images.githubusercontent.com/129598273/249548740-621cfb33-6f4e-4700-bb5c-cf4113381113.png" alt="circle" />
-
-          {/* <svg width="646" height="646" viewBox="0 0 646 646" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="200" cy="200" r="322.5" stroke="black" />
-          </svg> */}
-
           <div>
             <h1>Title banner here</h1>
             <h1>Title banner here</h1>
             <button onClick={openModal}>add photo</button>
           </div>
           <BannerImg>
-            <img src="https://user-images.githubusercontent.com/129598273/249558941-2a814bad-dc14-40d7-a4ce-013c1a04234f.png" alt="banner" />
+            <span>
+              <img src="https://user-images.githubusercontent.com/129598273/249828972-45ded19a-1978-47b8-b35b-89b5c9de9cd7.png" alt="banner" />
+              <img src="https://user-images.githubusercontent.com/129598273/249828897-2f5e2fbb-76d5-4dc4-b44c-cb3af34c78d9.png" alt="banner" />
+            </span>
           </BannerImg>
         </Banner>
         <StCardContainer>
           {post.map(item => {
             return (
-              <StCard key={item.id} onClick={openModal}>
+              <StCard key={item.id}>
                 <StImg>
                   <img src={item.photoURL} alt="" />
                 </StImg>
@@ -98,7 +83,7 @@ const Home = () => {
       </div>
 
       {/* modal */}
-      <CreatePostModal isOpen={isOpen} closeModal={closeModal} selectedFile={selectedFile} setSelectedFile={setSelectedFile} contents={contents} setContents={setContents} />
+      <CreatePostModal reload={reload} setReload={setReload} isOpen={isOpen} closeModal={closeModal} post={post} setPost={setPost} selectedFile={selectedFile} setSelectedFile={setSelectedFile} contents={contents} setContents={setContents} />
     </div>
   );
 };
@@ -119,11 +104,11 @@ const Banner = styled.div`
   position: relative;
   overflow: hidden;
 
-  & > img:nth-child(1) {
+  & > img {
     position: absolute;
     width: 500px;
     right: 40px;
-    top: 40px;
+    top: 60px;
   }
   & > img:nth-child(2) {
     position: absolute;
@@ -157,9 +142,21 @@ const Banner = styled.div`
 `;
 
 const BannerImg = styled.div`
-  & > img {
+  & > span {
+    display: flex;
+    position: relative;
+  }
+  & > span > img:nth-child(1) {
+    width: 300px;
+    z-index: 1;
+    position: relative;
+    left: 20px;
+    bottom: -20px;
+  }
+  & > span img:nth-child(2) {
     width: 300px;
     z-index: 0;
+    position: relative;
   }
 `;
 

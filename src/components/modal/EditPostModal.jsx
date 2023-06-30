@@ -8,22 +8,25 @@ import { auth, db, storage } from '../../firebase';
 import { ButtonWrap, StButton } from '../Button';
 import { useSelector } from 'react-redux';
 
-function EditPostModal({ isOpen, closeModal, selectedFile, setSelectedFile, contents, setContents, isUserTrue }) {
+function EditPostModal({ isOpen, closeModal, selectedFile, setSelectedFile, post, setPost, contents, setContents, isUserTrue }) {
   // 게시글 등록
 
   const { storeInfo } = useSelector(state => state.userLogIn);
-  console.log(post);
+  //   console.log(post);
 
   const selectFile = event => setSelectedFile(event.target.files[0]);
   const contentsOnchange = event => setContents(event.target.value);
 
   const addPostHandler = async event => {
     event.preventDefault();
+    console.log('addPostHandler');
     const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
     const storageRef = ref(storage, `${auth.currentUser.uid}/${selectedFile.name}`);
 
     uploadBytes(storageRef, selectedFile).then(snapshot => {
+      console.log('uploadBytes');
       getDownloadURL(storageRef).then(async url => {
+        console.log('getDownloadURL');
         const collectionRef = collection(db, 'post-item');
         await addDoc(collectionRef, {
           uid: auth.currentUser.uid,

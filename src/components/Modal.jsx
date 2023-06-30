@@ -16,12 +16,13 @@ export const ModalOverlay = styled.div`
 export const ModalContent = styled.div`
   background-color: #fff;
   padding: 40px 60px 40px 50px;
-  width: 400px;
-  height: 500px;
+  width: 470px;
+  height: 550px;
   border-radius: 12px;
 `;
 
 const Modal = ({ children }) => {
+ 
   return (
     <ModalOverlay>
       <ModalContent>{children}</ModalContent>

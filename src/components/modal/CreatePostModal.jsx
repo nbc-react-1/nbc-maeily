@@ -3,11 +3,11 @@ import { styled } from 'styled-components';
 import moment from 'moment/moment';
 import { createPortal } from 'react-dom';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, getDocs, query } from 'firebase/firestore';
 import { auth, db, storage } from '../../firebase';
 import { StButton } from '../Button';
 
-function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, contents, setContents }) {
+function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, contents, setContents, setReload, reload }) {
   // 게시글 등록
   const selectFile = event => setSelectedFile(event.target.files[0]);
   const contentsOnchange = event => setContents(event.target.value);
@@ -16,7 +16,6 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
     event.preventDefault();
     const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
     const storageRef = ref(storage, `${auth.currentUser.uid}/${selectedFile.name}`);
-
     uploadBytes(storageRef, selectedFile).then(snapshot => {
       getDownloadURL(storageRef).then(async url => {
         const collectionRef = collection(db, 'post-item');
@@ -52,7 +51,7 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
               <Input type="file" onChange={selectFile} />
               <Label>내용</Label>
               <InputArea value={contents} onChange={contentsOnchange} />
-              <Button type="submit" style={{ float: 'right' }}>
+              <Button onClick={() => setReload(!reload)} type="submit" style={{ float: 'right' }}>
                 등록
               </Button>
             </form>
@@ -73,6 +72,7 @@ const ModalBg = styled.div`
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 10;
 `;
 const ModalContents = styled.div`
   width: 60%;

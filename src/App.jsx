@@ -13,9 +13,13 @@ import { doc, getDoc } from 'firebase/firestore';
 
 function App() {
   const dispatch = useDispatch();
+
   useEffect(() => {
+    console.log('App.jsx - useEffect');
     onAuthStateChanged(auth, async user => {
+      console.log('onAuthStateChanged');
       if (user !== null) {
+        console.log('onAuthStateChanged');
         const docRef = doc(db, 'users', user.uid);
         const docSnap = await getDoc(docRef);
         dispatch({ type: 'SUCESS_USER_LOGIN', payload: { user: user, store: docSnap.data() } });
@@ -36,5 +40,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

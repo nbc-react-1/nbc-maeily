@@ -13,11 +13,8 @@ const Mypage = () => {
   const handleTabChange = tab => {
     setActiveTab(tab);
   };
-
-  console.log(storeInfo, 'mypage');
-
   const { profileImg, nickname } = storeInfo;
-
+  
   return (
     <>
       <Navigation />

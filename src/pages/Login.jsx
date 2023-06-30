@@ -97,10 +97,10 @@ const Login = () => {
 
   const handleSignIn = async e => {
     e.preventDefault();
+    console.log('handleSignIn');
     setLoadingBtn(true);
     const email = e.target[0].value;
     const password = e.target[1].value;
-
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setLoadingBtn(false);
@@ -112,6 +112,7 @@ const Login = () => {
   };
 
   const handlePassword = () => {
+    console.log('handlePassword');
     const email = prompt('email');
     sendPasswordResetEmail(auth, email)
       .then(a => {

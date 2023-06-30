@@ -5,29 +5,29 @@ import JoinUserModal from './modal/JoinUserModal';
 import { useSelector, useDispatch } from 'react-redux';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
-
 const Navigation = () => {
   const navigation = useNavigate();
   const dispatch = useDispatch();
   const { isUserTrue, sucessUserInfo, storeInfo } = useSelector(state => state.userLogIn);
-
   const goToHome = () => {
+    console.log('goToHome');
     navigation('/');
   };
   const goToMypage = () => {
+    console.log('goToMypage');
     navigation('/mypage');
   };
   const goToLogIn = () => {
+    console.log('goToLogIn');
     navigation('/login');
   };
-
   const userLogOut = async e => {
     e.preventDefault();
+    console.log('userLogOut');
     await signOut(auth);
     dispatch({ type: 'LOGOUT_USER' });
     navigation('/');
   };
-
   return (
     <NavContainer>
       <h2 onClick={goToHome}>Logo</h2>
@@ -36,13 +36,17 @@ const Navigation = () => {
         {isUserTrue && <span onClick={goToMypage}>Mypage</span>}
       </span>
       <NavDiv>
-        {isUserTrue ? <button onClick={userLogOut}>Log out</button> : <button onClick={goToLogIn}>Log In</button>}
-        <JoinUserModal>Sign Up</JoinUserModal>
+        {isUserTrue ? (
+          <button onClick={userLogOut}>Log out</button>
+        ) : (
+          <>
+            <button onClick={goToLogIn}>Log In</button> <JoinUserModal>Sign Up</JoinUserModal>
+          </>
+        )}
       </NavDiv>
     </NavContainer>
   );
 };
-
 const NavContainer = styled.div`
   width: 100vw;
   height: 60px;
@@ -54,7 +58,6 @@ const NavContainer = styled.div`
   left: 0;
   right: 0;
   z-index: 9999;
-
   & > h2 {
     font-weight: 900;
     font-size: 20px;
@@ -90,7 +93,6 @@ const NavContainer = styled.div`
     cursor: pointer;
   }
 `;
-
 const NavDiv = styled.div`
   position: absolute;
   right: 30px;

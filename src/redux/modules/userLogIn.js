@@ -12,11 +12,8 @@ const userLogIn = (state = initialState, action) => {
     case 'LOGOUT_USER':
       return { ...state, sucessUserInfo: {}, isUserTrue: false, storeInfo: {} };
 
-    // case 'STORE_INFO':
-    //   return { ...state, storeInfo: { ...action.payload.user } };
-
-    // case 'DELETE_STORE':
-    //   return { ...state, storeInfo: {}, isUserTrue: false };
+    case 'DELETE_USER':
+      return { ...state, sucessUserInfo: {}, isUserTrue: false, storeInfo: {} };
 
     default:
       return { ...state };
