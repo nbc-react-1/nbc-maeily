@@ -3,39 +3,34 @@ import { styled } from 'styled-components';
 import moment from 'moment/moment';
 import { createPortal } from 'react-dom';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { auth, db, storage } from '../../firebase';
 import { ButtonWrap, StButton } from '../Button';
 import { useSelector } from 'react-redux';
 
-function EditPostModal({ isOpen, closeModal, selectedFile, setSelectedFile, post, setPost, contents, setContents, isUserTrue }) {
+function EditPostModal({ isOpen, closeModal, selectedFile, setSelectedFile, post, setPost, contents, setContents, isUserTrue, editItemId, updatePhoto, setUpdatePhoto }) {
   // 게시글 등록
-
-  const { storeInfo } = useSelector(state => state.userLogIn);
-  //   console.log(post);
-
   const selectFile = event => setSelectedFile(event.target.files[0]);
   const contentsOnchange = event => setContents(event.target.value);
 
-  const addPostHandler = async event => {
+  // 게시글 업데이트
+  const editPostHandler = async event => {
     event.preventDefault();
-    console.log('addPostHandler');
+    console.log(editItemId, 'editItemId');
     const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
+
     const storageRef = ref(storage, `${auth.currentUser.uid}/${selectedFile.name}`);
 
     uploadBytes(storageRef, selectedFile).then(snapshot => {
-      console.log('uploadBytes');
+      console.log('storageRef', storageRef);
       getDownloadURL(storageRef).then(async url => {
-        console.log('getDownloadURL');
-        const collectionRef = collection(db, 'post-item');
-        await addDoc(collectionRef, {
-          uid: auth.currentUser.uid,
-          contents,
-          photoURL: url,
-          date: nowTime,
-        });
+        console.log('editItemId', editItemId);
+        console.log(storageRef.contents);
+        const docRef = doc(db, 'post-item', editItemId);
+        await updateDoc(docRef, { uid: auth.currentUser.uid, contents, photoURL: url, date: nowTime });
       });
     });
+    setUpdatePhoto(!updatePhoto);
     closeModal();
   };
   return createPortal(
@@ -55,7 +50,7 @@ function EditPostModal({ isOpen, closeModal, selectedFile, setSelectedFile, post
               </StSvg>
             </StModalCloseButton>
 
-            <form onSubmit={addPostHandler} style={{ clear: 'both', overflow: 'hidden' }}>
+            <form onSubmit={editPostHandler} style={{ clear: 'both', overflow: 'hidden' }}>
               <Label>사진 첨부 </Label>
               <Input type="file" onChange={selectFile} />
               <Label>내용</Label>

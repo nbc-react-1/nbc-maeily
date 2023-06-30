@@ -58,9 +58,11 @@ const MyInfo = () => {
     await querySnapshot.forEach(doc => {
       userAllInfo.push({ id: doc.id, ...doc.data() });
       const nicknameArr = userAllInfo.map(e => e.nickname);
-      setOverlapNickname(nicknameArr.indexOf(changeNickname));
+      if (storeInfo.nickname === changeNickname) {
+      }
+      setOverlapNickname(storeInfo.nickname === changeNickname ? '-1' : nicknameArr.indexOf(changeNickname));
     });
-    console.log('userAllInfo', userAllInfo);
+    console.log(overlapNickname);
     if (overlapNickname === -1) {
       const imageRef = ref(storage, `${auth.currentUser.uid}/${changeFile.name}`);
       await uploadBytes(imageRef, changeFile);
@@ -70,6 +72,8 @@ const MyInfo = () => {
       alert('회원 정보가 성공적으로 업데이트 되었습니다.');
       window.location.reload();
     } else if (overlapNickname >= 0) {
+      if (storeInfo.nickname === changeNickname) {
+      }
       alert('이미 존재하는 닉네임 입니다. 다른 닉네임을 사용해 보세요!');
     }
   };
