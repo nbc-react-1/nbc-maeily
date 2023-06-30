@@ -19,6 +19,7 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
     uploadBytes(storageRef, selectedFile).then(snapshot => {
       getDownloadURL(storageRef).then(async url => {
         const collectionRef = collection(db, 'post-item');
+        console.log('123', auth.currentUser);
         await addDoc(collectionRef, {
           uid: auth.currentUser.uid,
           contents,
