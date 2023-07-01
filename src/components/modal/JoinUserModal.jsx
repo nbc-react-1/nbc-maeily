@@ -220,15 +220,42 @@ export const checkTrueColor = {
 };
 
 const OpenModalButton = styled.button`
-  padding: 10px;
-  margin: 5px;
+  padding: 10px 17px;
+  margin: 5px 10px;
   border-radius: 5px;
   border: none;
-  color: #f4f5f9;
-  background-color: #121212;
+  color: #121212;
+  border: 1px solid black;
+  background-color: transparent;
   font-weight: 700;
   font-size: 13px;
   cursor: pointer;
+  position: relative;
+
+  &::before {
+    content: '';
+    width: 0%;
+    height: 100%;
+    position: absolute;
+    border-radius: 4px;
+    z-index: -1;
+    background-color: black;
+    left: 0;
+    top: 0;
+    transition: 0.3s ease-in-out;
+  }
+
+  &:hover {
+    color: #fff;
+  }
+
+  &:hover::before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    color: white;
+    position: absolute;
+  }
 `;
 
 const JoinButton = styled.button`

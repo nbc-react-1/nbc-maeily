@@ -80,41 +80,33 @@ function MyPosts() {
 
   console.log('---------------');
   console.log(editItemId, '/', itemId);
-  const { uid } = storeInfo;
-  console.log(uid);
+  const { uid, nickname } = storeInfo;
+  console.log(uid, '/', nickname);
   ////////////*************** */
+  const originData = [];
+
   useEffect(() => {
-    console.log('ddd');
     const read = async () => {
       // 모든 문서 불러오기
       const querySnapshot = await getDocs(collection(db, 'post-item'));
-      const originData = [];
       querySnapshot.forEach(doc => {
-        console.log(doc.id, ' => ', doc.data()); //전체 데이터
+        // 이렇게 전체를 돌려야만 하나?
+        // console.log(doc.id, ' => ', doc.data());/ //전체 데이터
         const data = {
           postId: doc.id,
           ...doc.data(),
         };
         originData.push(data);
       });
-      console.log(originData);
+      console.log('originData', originData);
       const newCon = originData.filter(item => {
         console.log('여기여기 ', editItemId);
         return item.postId === editItemId;
       });
       setOriginalData(...newCon);
-
-      ////
-      // const root = editItemId;
-      // console.log('read-id', root);
-      // const q = query(collection(db, 'post-item'), where('id', '==', editItemId));
-      // const querySnapshot = await getDocs(q);
-      // querySnapshot.forEach(doc => {
-      //   const data = { id: doc.id, ...data() };
-      // });
+      console.log('originalData', originalData);
     };
     read();
-    console.log('originalData', originalData);
   }, [editList]);
   ///////
   return (
@@ -130,7 +122,7 @@ function MyPosts() {
                 <img src={item.photoURL} alt="" />
               </StImg>
               <StContents>
-                <StId>{item.id}</StId>
+                <StId>{item.nickname}</StId>
                 <StContent>{item.contents}</StContent>
               </StContents>
               <StEditButton>

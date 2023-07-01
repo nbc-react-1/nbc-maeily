@@ -12,7 +12,6 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
   const imageRef = useRef('');
   const selectFile = event => setSelectedFile(event.target.files[0]);
   const contentsOnchange = event => setContents(event.target.value);
-
   const addPostHandler = async event => {
     event.preventDefault();
     const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');

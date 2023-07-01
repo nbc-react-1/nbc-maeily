@@ -10,6 +10,7 @@ import { uploadBytes, ref, getDownloadURL } from 'firebase/storage';
 import { StP } from '../../components/modal/JoinUserModal';
 import { checkTrueColor } from '../../components/modal/JoinUserModal';
 import { useDispatch } from 'react-redux';
+
 const MyInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -24,7 +25,6 @@ const MyInfo = () => {
   const [passwordType, setPasswordType] = useState(true);
   const [passwordType2, setPasswordType2] = useState(true);
   const [passwordType3, setPasswordType3] = useState(true);
-  const [overlapNickname, setOverlapNickname] = useState('');
   const { storeInfo } = useSelector(state => state.userLogIn);
 
   // 설정 모달 열기
@@ -47,7 +47,6 @@ const MyInfo = () => {
     setChangeNickname('');
     setCheckNickname(false);
     setChangeFile('');
-    setOverlapNickname('');
   };
 
   // 회원정보수정 로직
@@ -55,14 +54,12 @@ const MyInfo = () => {
     const matchName = query(collection(db, 'users'));
     const querySnapshot = await getDocs(matchName);
     const userAllInfo = [];
+    let overlapNickname;
     await querySnapshot.forEach(doc => {
       userAllInfo.push({ id: doc.id, ...doc.data() });
       const nicknameArr = userAllInfo.map(e => e.nickname);
-      if (storeInfo.nickname === changeNickname) {
-      }
-      setOverlapNickname(storeInfo.nickname === changeNickname ? '-1' : nicknameArr.indexOf(changeNickname));
+      overlapNickname = storeInfo.nickname === changeNickname ? -1 : nicknameArr.indexOf(changeNickname);
     });
-    console.log(overlapNickname);
     if (overlapNickname === -1) {
       const imageRef = ref(storage, `${auth.currentUser.uid}/${changeFile.name}`);
       await uploadBytes(imageRef, changeFile);
@@ -72,8 +69,6 @@ const MyInfo = () => {
       alert('회원 정보가 성공적으로 업데이트 되었습니다.');
       window.location.reload();
     } else if (overlapNickname >= 0) {
-      if (storeInfo.nickname === changeNickname) {
-      }
       alert('이미 존재하는 닉네임 입니다. 다른 닉네임을 사용해 보세요!');
     }
   };

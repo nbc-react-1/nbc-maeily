@@ -58,7 +58,7 @@ function EditPostModal({ isOpen, closeModal, selectedFile, setSelectedFile, cont
               <Label>사진 첨부 </Label>
               <Input type="file" onChange={selectFile} />
               <Label>내용</Label>
-              <InputArea value={originalData.contents} onChange={contentsOnchange} />
+              <InputArea placeholder={originalData.contents} value={contents} onChange={contentsOnchange} />
               <Button type="submit" style={{ float: 'right' }}>
                 등록
               </Button>

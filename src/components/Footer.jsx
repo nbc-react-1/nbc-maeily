@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const Footer = () => {
   return (
     <FooterContainer>
-      <h1>MaelyLook</h1>
+      <h1>MaeilyLook</h1>
       <p>내일배움캠프 React 6</p>
       <p> &copy; 2023 NBC Ilhajo All rights reserved</p>
       <TeamLink>

@@ -62,19 +62,17 @@ const Home = () => {
           </BannerImg>
         </Banner>
         <StCardContainer>
-          {post.map(item => {
-            return (
-              <StCard key={item.id}>
-                <StImg>
-                  <img src={item.photoURL} alt="" />
-                </StImg>
-                <StContents>
+          {post.map(item => (
+            <StCard key={item.id}>
+              <StImg>
+                <img src={item.photoURL} alt="" />
+                <StHover>
                   <StId>{item.id}</StId>
                   <StContent>{item.contents}</StContent>
-                </StContents>
-              </StCard>
-            );
-          })}
+                </StHover>
+              </StImg>
+            </StCard>
+          ))}
         </StCardContainer>
         <Footer />
       </div>
@@ -157,42 +155,74 @@ const BannerImg = styled.div`
   }
 `;
 
-// list style
 const StCardContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
-  max-width: 1300px;
+  width: 1300px;
   min-width: 800px;
-  margin: 0 auto;
   padding-top: 50px;
+
+  margin: 0 auto;
+  flex-direction: column;
+  align-content: flex;
+  height: 3000px;
+  overflow: hidden;
 `;
+
 const StCard = styled.div`
   border: none;
-  width: calc((100% - 90px) / 4);
   cursor: pointer;
+  width: calc((100% - 90px) / 4);
+  position: relative;
+
+  flex: 0 0 150px;
+  flex-basis: 100px;
 `;
+
 const StImg = styled.div`
-  width: 100%;
   overflow: hidden;
+
   img {
     width: 100%;
     border-radius: 10px;
     object-fit: cover;
   }
+
+  &:hover {
+    opacity: 1;
+  }
 `;
-const StContents = styled.div`
+
+const StHover = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  padding: 20px 0;
+  height: 99%;
+  opacity: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  padding: 20px;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 1;
+  }
 `;
+
 const StId = styled.h4`
-  width: 100%;
-  padding: 5px 0;
   font-weight: bold;
   font-size: 20px;
+  // margin-bottom: 10px;
 `;
+
 const StContent = styled.p`
-  width: 100%;
-  padding: 5px 0;
   font-size: 14px;
+  text-align: center;
 `;
