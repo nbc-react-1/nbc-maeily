@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { styled } from 'styled-components';
 import moment from 'moment/moment';
 import { createPortal } from 'react-dom';
@@ -9,25 +9,36 @@ import { StButton } from '../Button';
 
 function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, contents, setContents, setReload, reload }) {
   // 게시글 등록
+  const imageRef = useRef('');
   const selectFile = event => setSelectedFile(event.target.files[0]);
   const contentsOnchange = event => setContents(event.target.value);
 
   const addPostHandler = async event => {
     event.preventDefault();
     const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
-    const storageRef = ref(storage, `${auth.currentUser.uid}/${selectedFile.name}`);
-    uploadBytes(storageRef, selectedFile).then(snapshot => {
-      getDownloadURL(storageRef).then(async url => {
-        const collectionRef = collection(db, 'post-item');
-        await addDoc(collectionRef, {
-          uid: auth.currentUser.uid,
-          contents,
-          photoURL: url,
-          date: nowTime,
+    const storageRef = ref(storage, `${auth.currentUser.uid}/${selectedFile?.name}`);
+    //************************ */
+    if (!storageRef) {
+      alert('사진을 등록해주세요');
+      imageRef.current.focus();
+    } else if (contents === '') {
+      alert('내용을 입력해주세요');
+    } else {
+      uploadBytes(storageRef, selectedFile).then(snapshot => {
+        getDownloadURL(storageRef).then(async url => {
+          const collectionRef = collection(db, 'post-item');
+          await addDoc(collectionRef, {
+            uid: auth.currentUser.uid,
+            contents,
+            photoURL: url,
+            date: nowTime,
+          });
         });
       });
-    });
-    closeModal();
+      closeModal();
+      setReload(!reload);
+      console.log('등록완료 ');
+    }
   };
 
   return createPortal(
@@ -45,13 +56,13 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
                 <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z" />
               </StSvg>
             </StModalCloseButton>
-
+            {/* <button onClick={() => setReload(!reload)}>sdfsfsdf</button> */}
             <form onSubmit={addPostHandler} style={{ clear: 'both', overflow: 'hidden' }}>
               <Label>사진 첨부 </Label>
-              <Input type="file" onChange={selectFile} />
+              <Input type="file" onChange={selectFile} ref={imageRef} />
               <Label>내용</Label>
               <InputArea value={contents} onChange={contentsOnchange} />
-              <Button onClick={() => setReload(!reload)} type="submit" style={{ float: 'right' }}>
+              <Button type="submit" style={{ float: 'right' }}>
                 등록
               </Button>
             </form>

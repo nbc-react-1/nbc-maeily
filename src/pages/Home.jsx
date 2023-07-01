@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 // import { useSelector } from 'react-redux';
 import { styled } from 'styled-components';
 import { db } from '../firebase';
-import { getDocs, collection, query } from 'firebase/firestore';
+import { getDocs, collection, query, onSnapshot } from 'firebase/firestore';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import CreatePostModal from '../components/modal/CreatePostModal';
@@ -26,21 +26,18 @@ const Home = () => {
 
   // 데이터 리스트로 불러오기
   useEffect(() => {
-    console.log('Home useEffect');
-    console.log(reload, 'reload');
-    const initialPostItem = [];
     const fetchData = async () => {
       const queryValue = query(collection(db, 'post-item'));
-      const querySnapshot = await getDocs(queryValue);
-      querySnapshot.forEach(doc => {
-        const data = {
+      const unsubscribe = onSnapshot(queryValue, querySnapshot => {
+        const initialPostItem = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
-        };
-        initialPostItem.push(data);
+        }));
+        setPost(initialPostItem);
       });
-      setPost(initialPostItem);
+      return unsubscribe;
     };
+
     fetchData();
   }, [reload]);
 
