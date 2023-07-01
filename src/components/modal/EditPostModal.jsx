@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { styled } from 'styled-components';
 import moment from 'moment/moment';
 import { createPortal } from 'react-dom';
@@ -8,33 +8,32 @@ import { auth, db, storage } from '../../firebase';
 import { ButtonWrap, StButton } from '../Button';
 import { useSelector } from 'react-redux';
 
-function EditPostModal({ isOpen, closeModal, selectedFile, setSelectedFile, contents, setContents, editItemId, updatePhoto, setUpdatePhoto, originalData, setOriginalData }) {
-  // 게시글 등록
-  const selectFile = event => setSelectedFile(event.target.files[0]);
+function EditPostModal({ isOpen, closeModal, selectedFile, setSelectedFile, editItemId, updatePhoto, setUpdatePhoto, originalData, setOriginalData }) {
+  const imgRef = useRef();
+  const [contents, setContents] = useState('');
+  // 게시글 수정 등록
   const contentsOnchange = event => setContents(event.target.value);
 
   const editPostHandler = async event => {
     event.preventDefault();
-    console.log(editItemId, 'editItemId', editItemId.contents);
     const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
-    const storageRef = ref(storage, `${auth.currentUser.uid}/${selectedFile.name}`);
-
-    uploadBytes(storageRef, selectedFile).then(snapshot => {
-      console.log('storageRef', storageRef);
-      getDownloadURL(storageRef).then(async url => {
-        console.log('editItemId', editItemId.contents);
-        console.log(storageRef.contents);
-        const docRef = doc(db, 'post-item', editItemId);
-        await updateDoc(docRef, {
-          uid: auth.currentUser.uid,
-          contents,
-          photoURL: url,
-          date: nowTime,
-        });
-      });
+    const docRef = doc(db, 'post-item', editItemId);
+    await updateDoc(docRef, {
+      uid: auth.currentUser.uid,
+      contents,
+      photoURL: selectedFile,
+      date: nowTime,
     });
-    // setUpdatePhoto(!updatePhoto);
     closeModal();
+  };
+
+  const handleChangeFile = () => {
+    const file = imgRef.current.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setSelectedFile(reader.result);
+    };
   };
 
   return createPortal(
@@ -54,11 +53,19 @@ function EditPostModal({ isOpen, closeModal, selectedFile, setSelectedFile, cont
               </StSvg>
             </StModalCloseButton>
 
-            <form onSubmit={editPostHandler} style={{ clear: 'both', overflow: 'hidden' }}>
-              <Label>사진 첨부 </Label>
-              <Input type="file" onChange={selectFile} />
-              <Label>내용</Label>
-              <InputArea placeholder={originalData.contents} value={contents} onChange={contentsOnchange} />
+            <form onSubmit={editPostHandler} style={{ clear: 'both', overflow: 'scroll' }}>
+              <InputImgContainer>
+                <input style={{ display: 'none' }} name="file" id="file" type="file" ref={imgRef} onChange={handleChangeFile} />
+                <InputImg url={selectedFile}>
+                  <ImgLabel required htmlFor="file">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="1.3em" viewBox="0 0 640 512" style={{ fill: 'black', marginRight: 10 }}>
+                      <path d="M256 0H576c35.3 0 64 28.7 64 64V288c0 35.3-28.7 64-64 64H256c-35.3 0-64-28.7-64-64V64c0-35.3 28.7-64 64-64zM476 106.7C471.5 100 464 96 456 96s-15.5 4-20 10.7l-56 84L362.7 169c-4.6-5.7-11.5-9-18.7-9s-14.2 3.3-18.7 9l-64 80c-5.8 7.2-6.9 17.1-2.9 25.4s12.4 13.6 21.6 13.6h80 48H552c8.9 0 17-4.9 21.2-12.7s3.7-17.3-1.2-24.6l-96-144zM336 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM64 128h96V384v32c0 17.7 14.3 32 32 32H320c17.7 0 32-14.3 32-32V384H512v64c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64zm8 64c-8.8 0-16 7.2-16 16v16c0 8.8 7.2 16 16 16H88c8.8 0 16-7.2 16-16V208c0-8.8-7.2-16-16-16H72zm0 104c-8.8 0-16 7.2-16 16v16c0 8.8 7.2 16 16 16H88c8.8 0 16-7.2 16-16V312c0-8.8-7.2-16-16-16H72zm0 104c-8.8 0-16 7.2-16 16v16c0 8.8 7.2 16 16 16H88c8.8 0 16-7.2 16-16V416c0-8.8-7.2-16-16-16H72zm336 16v16c0 8.8 7.2 16 16 16h16c8.8 0 16-7.2 16-16V416c0-8.8-7.2-16-16-16H424c-8.8 0-16 7.2-16 16z" />
+                    </svg>
+                  </ImgLabel>
+                </InputImg>
+
+                <InputArea placeholder={originalData.contents} value={contents} onChange={contentsOnchange} />
+              </InputImgContainer>
               <Button type="submit" style={{ float: 'right' }}>
                 등록
               </Button>
@@ -84,9 +91,10 @@ const ModalBg = styled.div`
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 50;
 `;
 const ModalContents = styled.div`
-  width: 60%;
+  width: 50%;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -95,6 +103,7 @@ const ModalContents = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 5%;
+  /* overflow: scroll; */
 `;
 // 모달 닫기 컴포넌트
 const StModalCloseButton = styled.button`
@@ -112,11 +121,6 @@ const StSvg = styled.svg`
     scale: 1.2;
   }
 `;
-const Label = styled.label`
-  width: 100%;
-  display: block;
-  line-height: 35px;
-`;
 const Input = styled.input`
   width: 100%;
   border: 0;
@@ -125,27 +129,68 @@ const Input = styled.input`
   border-radius: 5px;
 `;
 const InputArea = styled.textarea`
-  width: 100%;
-  height: 300px;
+  width: 300px;
+  height: 50px;
   border: 0;
-  border: solid 1px #ddd;
+  border: none;
   padding: 10px;
   border-radius: 5px;
+  align-items: center;
   margin-bottom: 25px;
-`;
-// Button
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding: 10px;
+  resize: none;
+  position: absolute;
+  bottom: -80px;
+
+  &:focus {
+    outline: none;
+  }
 `;
 
+// button
 const Button = styled.button`
-  padding: 10px 22px;
+  padding: 10px 17px;
+  margin: 5px 10px;
+  border-radius: 5px;
+  border: none;
+  border: 1px solid black;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  border-radius: 50px;
-  border: 1px solid rgb(20, 22, 23);
-  color: rgb(20, 22, 23);
+  font-weight: 700;
+  font-size: 13px;
+  color: black;
+  background-color: transparent;
+  position: relative;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    background-color: black;
+    color: white;
+  }
+`;
+
+const InputImg = styled.div`
+  width: 300px;
+  height: 400px;
+  background-color: #f4f5f9;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  border-radius: 5px;
+  background-image: url(${props => props.url});
+  opacity: 0.7;
+  position: relative;
+`;
+
+const InputImgContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-bottom: 40px;
+`;
+
+const ImgLabel = styled.label`
+  position: absolute;
+  right: 0px;
+  top: 5px;
+  cursor: pointer;
 `;

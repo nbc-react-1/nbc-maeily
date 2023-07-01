@@ -61,7 +61,7 @@ const NavContainer = styled.div`
   color: black;
   left: 0;
   right: 0;
-  z-index: 9999;
+  z-index: 20;
   & > img {
     width: 8em;
     margin-left: 1em;

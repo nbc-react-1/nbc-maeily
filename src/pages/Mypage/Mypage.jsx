@@ -50,7 +50,7 @@ const MypageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem;
+  padding: 100px 10px;
   margin-top: 60px;
 `;
 
