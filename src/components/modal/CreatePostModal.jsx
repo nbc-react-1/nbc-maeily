@@ -59,7 +59,6 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
       setImgFile(reader.result);
     };
   };
-  ////////
 
   return createPortal(
     <div>

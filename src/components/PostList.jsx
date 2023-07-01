@@ -8,7 +8,7 @@ const PostList = () => {
   const [post, setPost] = useState([]);
   const [reload, setReload] = useState(false);
 
-  //리덕스 유저정보 .uid   //파이어스토어
+  //리덕스 유저정보 .uid //파이어스토어
   const { storeInfo } = useSelector(state => state.userLogIn);
   const { uid, nickname } = storeInfo;
   console.log(uid, ' / ', nickname);
