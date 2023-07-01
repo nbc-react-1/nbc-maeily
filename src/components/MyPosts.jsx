@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { keyframes, styled } from 'styled-components';
 import { collection, deleteDoc, doc, getDoc, getDocFromCache, getDocs, onSnapshot, orderBy, query, where } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { db } from '../firebase';
 import { useSelector } from 'react-redux';
-import EditPostModal from '../../components/modal/EditPostModal';
+import EditPostModal from './modal/EditPostModal';
 
 function MyPosts() {
   const { storeInfo, isUserTrue } = useSelector(state => state.userLogIn);

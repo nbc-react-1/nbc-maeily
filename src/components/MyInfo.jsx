@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { styled, keyframes } from 'styled-components';
-import Modal from '../../components/Modal';
+import Modal from './Modal';
 import { useSelector } from 'react-redux';
 import { collection, deleteDoc, doc, getDocs, query, updateDoc } from 'firebase/firestore';
-import { db, auth, storage } from '../../firebase';
 import { deleteUser, getAuth, updatePassword, signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { uploadBytes, ref, getDownloadURL } from 'firebase/storage';
-import { StP } from '../../components/modal/JoinUserModal';
-import { checkTrueColor } from '../../components/modal/JoinUserModal';
+import { checkTrueColor } from './modal/JoinUserModal';
 import { useDispatch } from 'react-redux';
+import { StP } from './modal/JoinUserModal';
+import { db, auth, storage } from '../firebase';
 
 const MyInfo = () => {
   const dispatch = useDispatch();

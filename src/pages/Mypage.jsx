@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import MyPosts from './MyPosts';
-import Navigation from '../../components/Navigation';
-import Footer from '../../components/Footer';
+import MyPosts from '../components/MyPosts';
+import Navigation from '../components/Navigation';
+import Footer from '../components/Footer';
 import { useSelector } from 'react-redux';
-import MyInfo from './MyInfo';
+import MyInfo from '../components/MyInfo';
 
 const Mypage = () => {
   const { storeInfo } = useSelector(state => state.userLogIn);
