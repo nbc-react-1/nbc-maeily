@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { keyframes, styled } from 'styled-components';
-import { collection, deleteDoc, doc, getDoc, getDocFromCache, getDocs, onSnapshot, orderBy, query, where } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { db } from '../firebase';
 import { useSelector } from 'react-redux';
-import EditPostModal from '../../components/modal/EditPostModal';
+import EditPostModal from './modal/EditPostModal';
 
 function MyPosts() {
   const { storeInfo, isUserTrue } = useSelector(state => state.userLogIn);
   const [isOpen, setIsOpen] = useState(false);
   const [post, setPost] = useState([]);
-  const [contents, setContents] = useState('');
-  const [selectedFile, setSelectedFile] = useState(null);
 
   const [itemId, setItemId] = useState('');
   const [editList, setEditList] = useState(false);
   const [editItemId, setEditItemId] = useState('');
   const [updatePhoto, setUpdatePhoto] = useState(false);
   const [originalData, setOriginalData] = useState({});
+
+  //모달인풋사진관련
+  const [imgFile, setImgFile] = useState('');
 
   const openModal = () => {
     setItemId('');
@@ -25,8 +26,6 @@ function MyPosts() {
   };
   const closeModal = () => {
     setIsOpen(!isOpen);
-    setContents('');
-    setSelectedFile(null);
   };
 
   // 게시글 불러오기
@@ -63,10 +62,10 @@ function MyPosts() {
     }
   };
 
-  // edit 버블 열기
+  // edit 말풍선 열기
   const openBubble = item => {
     setEditItemId(item.id);
-    setSelectedFile(item.photoURL);
+    setImgFile(item.photoURL);
     if (editList) {
       setItemId('');
       setEditList(!editList);
@@ -76,21 +75,13 @@ function MyPosts() {
     }
   };
 
-  console.log('---------------');
-  console.log(editItemId, '/', itemId);
-  const { uid, nickname } = storeInfo;
-  console.log(uid, '/', nickname);
-  ////////////*************** */
   const originData = [];
-
   useEffect(() => {
     const read = async () => {
       // 모든 문서 불러오기
       const queryVal = query(collection(db, 'post-item'), orderBy('date', 'desc'));
       const querySnapshot = await getDocs(queryVal);
       querySnapshot.forEach(doc => {
-        // 이렇게 전체를 돌려야만 하나?
-        // console.log(doc.id, ' => ', doc.data());/ //전체 데이터
         const data = {
           postId: doc.id,
           ...doc.data(),
@@ -107,7 +98,7 @@ function MyPosts() {
     };
     read();
   }, [editList]);
-  ///////
+
   return (
     <StCardContainer>
       {post
@@ -121,7 +112,6 @@ function MyPosts() {
                 <img src={item.photoURL} alt="" />
               </StImg>
               <StContents>
-                <StId>{nickname}</StId>
                 <StContentDate>{item.date}</StContentDate>
                 <StContent>{item.contents}</StContent>
               </StContents>
@@ -148,12 +138,11 @@ function MyPosts() {
         isUserTrue={isUserTrue}
         isOpen={isOpen}
         closeModal={closeModal}
-        selectedFile={selectedFile}
-        setSelectedFile={setSelectedFile}
-        // contents={contents}
-        // setContents={setContents}
         originalData={originalData}
         setOriginalData={setOriginalData}
+        //모달인풋사진관련
+        imgFile={imgFile}
+        setImgFile={setImgFile}
       />
     </StCardContainer>
   );
@@ -177,6 +166,9 @@ const StCard = styled.div`
   border: none;
   width: calc((100% - 90px) / 4);
   position: relative;
+  // background-image: url(${props => props.url});
+  // background-position: center;
+  // background-size: cover;
   transition: all 0.3s;
   @media only screen and (max-width: 1200px) {
     width: calc((100% - 60px) / 3);
@@ -190,6 +182,7 @@ const StImg = styled.div`
   height: 300px;
   border-radius: 10px;
   overflow: hidden;
+
   img {
     object-fit: cover;
     position: relative;

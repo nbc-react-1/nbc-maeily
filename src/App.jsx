@@ -3,7 +3,8 @@ import GlobalStyle from './GlobalStyle';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import Mypage from './pages/Mypage/Mypage';
+import Mypage from './pages/Mypage';
+
 import { Route, Routes } from 'react-router-dom';
 import { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -31,7 +32,6 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        {/* <Route path="/signin" element={<SignIn />} /> */}
         <Route path="/mypage" element={<Mypage />} />
       </Routes>
     </div>

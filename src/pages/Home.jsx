@@ -25,20 +25,10 @@ const Home = () => {
     setSelectedFile(null);
   };
   const allUser = [];
+
   // 데이터 리스트로 불러오기
   useEffect(() => {
     const fetchData = async () => {
-      // 전체 유저 정보
-      // const querySnapshot = await getDocs(collection(db, 'users'));
-      // querySnapshot.forEach(doc => {
-      //   const data = {
-      //     userId: doc.id,
-      //     ...doc.data(),
-      //   };
-      //   allUser.push(data);
-      // });
-      // console.log('유저정보', allUser);
-
       // 전체 게시글 불러오기
       const queryValue = query(collection(db, 'post-item'), orderBy('date', 'desc'));
       const unsubscribe = onSnapshot(queryValue, querySnapshot => {
@@ -67,23 +57,6 @@ const Home = () => {
             <h2>배너에 넣을 글 생각해야 될 듯</h2>
             <button onClick={openModal}>Add Photo</button>
           </BannerContent>
-          {/* <img
-            src="https://kream-phinf.pstatic.net/MjAyMzA2MjFfMzAw/MDAxNjg3Mjc1MzkxNTYy.AATV4EArmsWghhVWGieHapu6y3KKeJ05uzQyTvAmvoMg.f3Ll_sUM9Tsi_-lNq8GEZPAl81meOvArX8yqNPx8XYAg.JPEG/a_e27dd76fcea941dfb66df90fd68dfe3d.jpg?type=m_2560_webp"
-            alt="배너 이미지"
-          />
-          <img src="https://user-images.githubusercontent.com/129598273/249545123-32c7c939-c760-4751-915a-a176a50f6cd6.png" alt="circle" />
-          <img src="https://user-images.githubusercontent.com/129598273/249548740-621cfb33-6f4e-4700-bb5c-cf4113381113.png" alt="circle" />
-          <div>
-            <h1>Title banner here</h1>
-            <h1>Title banner here</h1>
-            <button onClick={openModal}>add photo</button>
-          </div>
-          <BannerImg>
-            <span>
-              <img src="https://user-images.githubusercontent.com/129598273/249828972-45ded19a-1978-47b8-b35b-89b5c9de9cd7.png" alt="banner" />
-              <img src="https://user-images.githubusercontent.com/129598273/249828897-2f5e2fbb-76d5-4dc4-b44c-cb3af34c78d9.png" alt="banner" />
-            </span>
-          </BannerImg> */}
         </Banner>
         <StCardContainer>
           {post.map(item => (
@@ -127,47 +100,6 @@ const Banner = styled.div`
   background-image: url(${props => props.url});
   background-position: center;
   background-size: cover;
-
-  // & > img {
-  //   position: absolute;
-  //   width: 500px;
-  //   right: 40px;
-  //   top: 60px;
-  // }
-  // & > img:nth-child(2) {
-  //   position: absolute;
-  //   width: 300px;
-  //   left: -30px;
-  //   top: 0px;
-  // }
-
-  // & > div {
-  //   width: 50vw;
-  //   display: flex;
-  //   flex-direction: column;
-  //   justify-content: center;
-  //   align-items: center;
-  // }
-  /* & > div > h1 {
-    font-weight: 900;
-    font-size: 40px;
-  }
-
-  & > div > h2 {
-    font-weight: 900;
-    font-size: 40px;
-  }
-
-  & > div > button {
-    border: 1px solid black;
-    padding: 10px 17px;
-    border-radius: 3px;
-    font-weight: 700;
-    font-size: 13px;
-    color: #f4f5f9;
-    background-color: #121212;
-    margin-top: 40px;
-  } */
 `;
 
 const BannerContent = styled.div`
