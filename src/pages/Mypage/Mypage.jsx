@@ -14,14 +14,12 @@ const Mypage = () => {
     setActiveTab(tab);
   };
   const { profileImg, nickname } = storeInfo;
-  
+
   return (
     <>
       <Navigation />
       <MypageContainer>
-        <ImageWrap>
-          <UserImage src={profileImg} alt="User Image" />
-        </ImageWrap>
+        <ImageWrap src={profileImg}></ImageWrap>
 
         <UserName>{nickname}</UserName>
         <NavigationText>
@@ -52,18 +50,19 @@ const MypageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem;
+  padding: 100px 10px;
+  margin-top: 60px;
 `;
+
 const ImageWrap = styled.div`
   width: 200px;
   height: 200px;
   border-radius: 50%;
   overflow: hidden;
   margin-bottom: 2rem;
-`;
-const UserImage = styled.img`
-  width: 100%;
-  object-fit: cover;
+  background-image: url(${props => props.src});
+  background-position: center;
+  background-size: cover;
 `;
 
 const UserName = styled.h2`
