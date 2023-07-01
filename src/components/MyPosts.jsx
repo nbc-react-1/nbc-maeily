@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { keyframes, styled } from 'styled-components';
-import { collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocFromCache, getDocs, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useSelector } from 'react-redux';
 import EditPostModal from './modal/EditPostModal';
