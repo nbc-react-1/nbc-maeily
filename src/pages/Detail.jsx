@@ -21,8 +21,7 @@ const Detail = () => {
   const minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
 
   //댓글
-  const [comments, setComments] = useState([]); //모든 댓글
-  const [cmtContents, setCmtContents] = useState(''); //새로운 댓글
+  const [cmtContents, setCmtContents] = useState('');
   const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
 
   const [filteredComments, setFilteredComments] = useState([]);
@@ -37,7 +36,6 @@ const Detail = () => {
           ...doc.data(),
         }));
 
-        // Filter comments based on the current post ID
         const filtered = commentAllData.filter(item => item.postId === postData.postId);
         setFilteredComments(filtered);
       });
@@ -46,7 +44,6 @@ const Detail = () => {
     fetchData();
   }, [postData.postId]);
 
-  console.log(comments);
   // 등록
   const addComment = async event => {
     event.preventDefault();
@@ -108,7 +105,6 @@ const Detail = () => {
           return (
             <CommentList key={item.uid}>
               {' '}
-              {/* uid를 고유한 키 값으로 사용 */}
               <ProfileImg>
                 <img src={item.profileImg} alt="" />
               </ProfileImg>
@@ -120,7 +116,6 @@ const Detail = () => {
                   </EditWrap>
                   <SmallFont>{item.date.toString()}</SmallFont>
                 </div>
-                <div>하트</div>
               </CmtContents>
             </CommentList>
           );
