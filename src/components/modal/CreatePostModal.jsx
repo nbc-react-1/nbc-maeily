@@ -124,6 +124,7 @@ const ModalContents = styled.div`
   transform: translate(-50%, -50%);
   padding: 5%;
   overflow: scroll;
+  min-width: 400px;
 `;
 
 const StModalCloseButton = styled.button`

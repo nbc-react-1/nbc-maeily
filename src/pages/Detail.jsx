@@ -140,7 +140,9 @@ const Wrap = styled.div`
   width: 40%;
   margin: 50px auto;
 `;
-const PostBox = styled.div``;
+const PostBox = styled.div`
+  min-width: 400px;
+`;
 const PostHeader = styled.div`
   display: flex;
   align-items: center;
@@ -185,12 +187,15 @@ const SmallFont = styled.p`
 const CommentSection = styled.div``;
 const CommentForm = styled.form`
   margin: 40px 0;
+  min-width: 400px;
 `;
 const CommentInputLabel = styled.label`
   display: block;
   width: 100%;
   font-size: 0.8rem;
   color: #8a8a8a;
+
+  min-width: 400px;
 `;
 const CommentInput = styled.input`
   width: 80%;
@@ -246,6 +251,7 @@ const StButton = styled.button`
 const CommentList = styled.div`
   display: flex;
   margin: 15px 0;
+  min-width: 400px;
 `;
 
 const CmtContents = styled.div`
