@@ -154,9 +154,12 @@ const StCardContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
-  width: 1300px;
+  width: 1200px;
   margin: 0 auto;
   padding: 50px 0;
+  @media only screen and (max-width: 1200px) {
+    width: 100%;
+  }
   @media only screen and (max-width: 890px) {
     gap: 20px;
   }

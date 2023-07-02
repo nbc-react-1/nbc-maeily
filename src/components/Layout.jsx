@@ -8,7 +8,10 @@ function Layout({ children }) {
 export default Layout;
 
 const Container = styled.main`
-  max-width: 1400px;
+  max-width: 1300px;
   margin: 0 auto;
-  padding: 80px 0;
+  padding: 80px 0px;
+  @media only screen and (max-width: 1200px) {
+    padding: 80px 10px;
+  }
 `;

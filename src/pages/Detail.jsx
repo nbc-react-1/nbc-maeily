@@ -139,9 +139,12 @@ const LikeDiv = styled.div`
 const Wrap = styled.div`
   width: 40%;
   margin: 50px auto;
+  @media only screen and (max-width: 890px) {
+    width: 100%;
+  }
 `;
 const PostBox = styled.div`
-  min-width: 400px;
+  /* min-width: 400px; */
 `;
 const PostHeader = styled.div`
   display: flex;

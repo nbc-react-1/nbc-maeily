@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { styled } from 'styled-components';
-import { db, auth } from '../firebase';
+import { db } from '../firebase';
 import { collection, query, onSnapshot, orderBy, getDocs, updateDoc, doc, setDoc } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import Layout from './Layout';
@@ -16,11 +16,8 @@ const PostList = () => {
   const [likeStatus, setLikeStatus] = useState(false);
   const [like, setLike] = useState([]);
 
-  //리덕스 유저정보 .uid //파이어스토어
   const { storeInfo } = useSelector(state => state.userLogIn);
   const { uid, nickname } = storeInfo;
-  console.log(uid, ' / ', nickname);
-  const allUser = [];
 
   // 데이터 리스트로 불러오기
   useEffect(() => {
@@ -48,7 +45,7 @@ const PostList = () => {
       return unsubscribe;
     };
     fetchData();
-  }, [reload, likeStatus]);
+  }, [likeStatus]);
 
   const detailPage = async item => {
     const q = query(collection(db, 'users'), where('uid', '==', item.uid));
@@ -163,28 +160,35 @@ const LikeCountHeart = styled.span`
 
 //list 목록
 const StCardContainer = styled.div`
+  width: 1300px;
   display: flex;
   flex-wrap: wrap;
-  gap: 30px;
-  max-width: 1300px;
-  min-width: 1000px;
-
+  gap: 1vw;
   margin: 0 auto;
   flex-direction: column;
-  align-content: flex;
+  align-content: flex-start;
   height: 3000px;
-  overflow: hidden;
+  /* overflow: hidden; */
+  transition: all 0.3s;
+  @media only screen and (max-width: 1300px) {
+    width: 100%;
+  }
 `;
 
 const StCard = styled.div`
   border: none;
-  width: calc((100% - 90px) / 4);
+  width: calc((100% - 3vw) / 4);
   cursor: pointer;
   position: relative;
-  flex: 0 0 150px;
-  flex-basis: 100px;
+  /* flex: 0 0 150px;
+  flex-basis: 100px; */
+  @media only screen and (max-width: 1200px) {
+    width: calc((100% - 2vw) / 3);
+  }
+  @media only screen and (max-width: 890px) {
+    width: calc((100% - 2vw) / 2);
+  }
 `;
-
 const StImg = styled.div`
   overflow: hidden;
 

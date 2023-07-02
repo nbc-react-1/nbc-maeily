@@ -126,7 +126,9 @@ const ModalContents = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 5%;
-  /* overflow: scroll; */
+  @media only screen and (max-width: 890px) {
+    width: 90%;
+  }
 `;
 // 모달 닫기 컴포넌트
 const StModalCloseButton = styled.button`
@@ -212,6 +214,8 @@ const InputImgContainer = styled.div`
 `;
 
 const ImgLabel = styled.label`
+  width: 100%;
+  height: 100%;
   position: absolute;
   right: 0px;
   top: 5px;
