@@ -18,10 +18,10 @@ const Banner = () => {
   };
 
   return (
-    <BannerWrapper url={'https://github.com/nbc-react-1/nbc-maeily/assets/133937368/7cfaaf37-d981-4ace-a8a5-8786ae57ea3c'}>
+    <BannerWrapper url={'https://github.com/nbc-react-1/nbc-maeily/assets/133937368/79f8a899-05af-4c09-a873-89729975d64d'}>
       <BannerContent>
-        <h1>로그인 페이지에 넣을 사진 만들게요</h1>
-        <h2>배너에 넣을 글 생각해야 될 듯</h2>
+        <h1>배너 사진 로딩 너무 오래걸리는데 왤까요?</h1>
+        <h2>사진 크기가 너무 큰가?</h2>
         <button onClick={openModal}>Add Photo</button>
         <CreatePostModal reload={reload} setReload={setReload} isOpen={isOpen} closeModal={closeModal} post={post} setPost={setPost} selectedFile={selectedFile} setSelectedFile={setSelectedFile} contents={contents} setContents={setContents} />
       </BannerContent>

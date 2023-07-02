@@ -50,8 +50,8 @@ const MypageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 100px 10px;
-  margin-top: 60px;
+  padding: 60px 10px;
+  margin-top: 20px;
 `;
 
 const ImageWrap = styled.div`

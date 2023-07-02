@@ -10,6 +10,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from './firebase';
 import { useDispatch } from 'react-redux';
 import { doc, getDoc } from 'firebase/firestore';
+import Detail from './pages/Detail';
 
 function App() {
   const dispatch = useDispatch();
@@ -30,6 +31,7 @@ function App() {
       <Navigation />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/detail" element={<Detail />} />
         <Route path="/login" element={<Login />} />
         <Route path="/mypage" element={<Mypage />} />
       </Routes>

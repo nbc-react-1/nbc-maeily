@@ -12,7 +12,7 @@ const Footer = () => {
       <p>내일배움캠프 React 6</p>
       <p> &copy; 2023 NBC Ilhajo All rights reserved</p>
       <TeamLink>
-        <a href="">Yujin</a> | <a href="">Sujung</a> | <a href="">Jinsu</a> | <a href="">Heejung</a>
+        <a href="https://github.com/goatisgoat">Yujin</a> | <a href="https://github.com/suzzjeon">Sujung</a> | <a href="https://github.com/kimjinsu0210">Jinsu</a> | <a href="https://github.com/heejung-newheee">Heejung</a>
       </TeamLink>
 
       <FooterSpan>
@@ -27,7 +27,7 @@ const Footer = () => {
           </a>
         </span>
         <span>
-          <a href="https://www.figma.com/file/fPo4E0J0vL3C9SQVRupEnW/Untitled?type=design&node-id=21-53&mode=design&t=ov90VfG1Yl1ez8Ho-0">
+          <a href="https://www.figma.com/files/project/97539919">
             <img src="https://github.com/nbc-react-1/nbc-maeily/assets/126348461/3e5369fc-2cf1-4e88-8f26-fa04869e1908" alt="" />
           </a>
         </span>

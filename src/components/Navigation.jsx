@@ -29,7 +29,12 @@ const Navigation = () => {
   };
   return (
     <NavContainer location={location.pathname}>
-      <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/133937368/250246793-23f60fee-7a0f-47bd-a4ed-12b27aac0a7b.svg" alt="로고 이미지" onClick={goToHome} />
+      <a
+        href="
+      "
+      >
+        <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/133937368/250246793-23f60fee-7a0f-47bd-a4ed-12b27aac0a7b.svg" alt="로고 이미지" onClick={goToHome} />
+      </a>
       <NextLogo>
         <span onClick={goToHome}>Home</span>
       </NextLogo>
@@ -62,7 +67,7 @@ const NavContainer = styled.div`
   left: 0;
   right: 0;
   z-index: 20;
-  & > img {
+  & > a {
     width: 8em;
     margin-left: 1em;
     cursor: pointer;

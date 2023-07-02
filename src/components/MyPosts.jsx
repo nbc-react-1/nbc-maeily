@@ -179,7 +179,7 @@ const StCard = styled.div`
 `;
 const StImg = styled.div`
   width: 100%;
-  height: 300px;
+  height: 420px;
   border-radius: 10px;
   overflow: hidden;
 
@@ -188,7 +188,11 @@ const StImg = styled.div`
     position: relative;
     top: 50%;
     left: 50%;
+    // width: 100%;
+
+    border-radius: 10px;
     transform: translate(-50%, -50%);
+    background-image: url(${props => props.url});
   }
   @media only screen and (max-width: 590px) {
     height: 170px;
@@ -201,13 +205,7 @@ const StContents = styled.div`
     padding: 8px 0 5px;
   }
 `;
-const StId = styled.h4`
-  width: 100%;
-  padding: 5px 0;
-  font-weight: bold;
-  font-size: 20px;
-  display: none;
-`;
+
 const StContent = styled.p`
   width: 100%;
   padding: 5px 0;
@@ -223,7 +221,7 @@ const StEditButton = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 100%;
+  // width: 50%;
 `;
 const StEditBubble = styled.div`
   position: relative;
@@ -267,6 +265,7 @@ const StEditButtonIcon = styled.div`
   right: 0;
   margin: 10px;
 `;
+
 const rotation = keyframes`
     100%{
     transform:rotate(180deg);
