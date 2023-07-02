@@ -14,7 +14,6 @@ function EditPostModal({ isOpen, closeModal, eachItemId, eachItemContent, imgFil
   const { storeInfo } = useSelector(state => state.userLogIn);
   const imgRef = useRef();
 
-  // 게시글 수정
   const editPostHandler = async event => {
     event.preventDefault();
     const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
