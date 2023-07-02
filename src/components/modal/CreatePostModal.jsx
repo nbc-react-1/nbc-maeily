@@ -20,9 +20,9 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
     const storageRef = ref(storage, `${auth.currentUser.uid}/${selectedFile?.name}`);
 
     //************************ */
-    if (!storageRef) {
+    if (!selectedFile) {
       alert('사진을 등록해주세요');
-      imageRef.current.focus();
+      // imageRef.current.focus();
     } else if (contents === '') {
       alert('내용을 입력해주세요');
     } else {
@@ -51,14 +51,23 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
   const [imgFile, setImgFile] = useState('');
   const imgRef = useRef();
 
-  const handleChangeFile = () => {
-    const file = imgRef.current.files[0];
-    setSelectedFile(file);
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setImgFile(reader.result);
-    };
+  const handleChangeFile = e => {
+    if (e.target.files.length === 0) {
+      setImgFile('');
+      setSelectedFile('');
+    } else {
+      const file = imgRef.current.files[0];
+      setSelectedFile(file);
+      const reader = new FileReader();
+      if (file) {
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+          setImgFile(reader.result);
+        };
+      } else {
+        return;
+      }
+    }
   };
 
   return createPortal(
