@@ -92,8 +92,8 @@ const NextLogo = styled.span`
     position: absolute;
     width: 45px;
     height: 2px;
-    left: 0;
-    bottom: -3px;
+    left: 2px;
+    bottom: -8px;
     background-color: ${props => (props.location === '/login' ? 'white' : 'black')};
     transform: scaleX(0);
     transition: all ease-in-out 0.3s;

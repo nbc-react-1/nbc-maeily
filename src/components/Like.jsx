@@ -2,20 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { styled } from 'styled-components';
 import { db } from '../firebase';
-import { collection, query,getDocs, updateDoc, doc, setDoc } from 'firebase/firestore';
+import { collection, query, getDocs, updateDoc, doc, setDoc } from 'firebase/firestore';
 
 import { useNavigate } from 'react-router-dom';
 import uuid from 'react-uuid';
+
 const Like = ({ item }) => {
   const navigate = useNavigate();
   const [likeStatus, setLikeStatus] = useState(false);
   const [like, setLike] = useState([]);
   const { storeInfo } = useSelector(state => state.userLogIn);
- 
 
-  // 데이터 리스트로 불러오기
+  // 좋아요 데이터 리스트로 불러오기
   useEffect(() => {
-    console.log('Like');
     const likesAllData = [];
     const fetchData = async () => {
       const likesValue = query(collection(db, 'likes'));
@@ -27,18 +26,22 @@ const Like = ({ item }) => {
         };
         likesAllData.push(data);
       });
+      // 조건에 따라 좋아요 누른 사람의 좋아요 데이터 필터
       const likesData = storeInfo.uid ? likesAllData.filter(e => storeInfo.uid === e.uid) : [];
       setLike(likesData);
     };
     fetchData();
   }, [likeStatus]);
 
+  // 좋아요 버튼 클릭 시 이벤트
   const postLike = async (item, likeOrNot, likeid) => {
+    // 로그인이 되었는지 우선적으로 체킹 후 비로그인이면 로그인 페이지로 유도
     if (!storeInfo.uid) {
       alert('좋아요 기능은 로그인을 해야 가능합니다!');
       const confirm = window.confirm('로그인 하시겠습니까?');
       if (confirm) navigate('/login');
     } else {
+      // 로그인 상태면 좋아요 데이터 update 및 set
       const UUID = uuid();
       const postRef = doc(db, 'post-item', item.postId);
       const collectionRef = doc(collection(db, 'likes'), UUID);
@@ -64,6 +67,7 @@ const Like = ({ item }) => {
   const likeOrNot = like.find(e => e.postId === item.postId)?.likeOrNot ?? false;
   const likeid = like.find(e => e.postId === item.postId)?.id ?? false;
   return (
+    // 삼항연산자를 통해 좋아요collection의 필드값인 likeOrNot이 true이면 빨간하트 false이면 빈하트 적용
     <HeartDiv onClick={() => postLike(item, likeOrNot, likeid)} style={{ cursor: 'pointer' }}>
       {likeOrNot ? (
         <HeartSvg xmlns="http://www.w3.org/2000/svg" height="1.5em" viewBox="0 0 512 512" fill="rgb(255, 48, 64)">

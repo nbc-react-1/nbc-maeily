@@ -1,27 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { keyframes, styled } from 'styled-components';
-import { collection, deleteDoc, doc, getDoc, getDocFromCache, getDocs, onSnapshot, orderBy, query, where } from 'firebase/firestore';
-import { db } from '../firebase';
+import { collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import { db } from '../../firebase';
 import { useSelector } from 'react-redux';
-import EditPostModal from './modal/EditPostModal';
+import EditPostModal from '../modal/EditPostModal';
+import { useNavigate } from 'react-router-dom';
 
 function MyPosts() {
-  const { storeInfo, isUserTrue } = useSelector(state => state.userLogIn);
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [post, setPost] = useState([]);
 
   const [itemId, setItemId] = useState('');
-  const [editList, setEditList] = useState(false);
-  const [editItemId, setEditItemId] = useState('');
-  const [updatePhoto, setUpdatePhoto] = useState(false);
-  const [originalData, setOriginalData] = useState({});
-
+  const [editBubble, setEditBubble] = useState(false);
+  const [eachItemId, setEachItemId] = useState('');
+  const [eachItemContent, setEachItemContent] = useState('');
+  const [updateInfo, setUpdateInfo] = useState(false);
   //모달인풋사진관련
   const [imgFile, setImgFile] = useState('');
 
+  const { storeInfo, isUserTrue } = useSelector(state => state.userLogIn);
+
   const openModal = () => {
     setItemId('');
-    setEditList(false);
+    setEditBubble(false);
     setIsOpen(!isOpen);
   };
   const closeModal = () => {
@@ -43,18 +45,17 @@ function MyPosts() {
       return unsubscribe;
     };
     fetchData();
-    console.log('불러오기완료');
-  }, [updatePhoto]);
+  }, [updateInfo]);
 
   // 게시글 삭제
   const deletePost = async () => {
     setItemId('');
-    setEditList(!editList);
+    setEditBubble(!editBubble);
     const deletePostConfirm = window.confirm('정말로 삭제하시겠습니까?');
     if (deletePostConfirm) {
-      await deleteDoc(doc(db, 'post-item', editItemId))
+      await deleteDoc(doc(db, 'post-item', eachItemId))
         .then(() => {
-          setUpdatePhoto(!updatePhoto);
+          setUpdateInfo(!updateInfo);
         })
         .catch(error => {
           console.log('error', error.code);
@@ -64,40 +65,38 @@ function MyPosts() {
 
   // edit 말풍선 열기
   const openBubble = item => {
-    setEditItemId(item.id);
+    setEachItemId(item.id);
+    setEachItemContent(item.contents);
     setImgFile(item.photoURL);
-    if (editList) {
+    if (editBubble) {
       setItemId('');
-      setEditList(!editList);
+      setEditBubble(!editBubble);
     } else {
       setItemId(item.id);
-      setEditList(!editList);
+      setEditBubble(!editBubble);
     }
   };
 
-  const originData = [];
-  useEffect(() => {
-    const read = async () => {
-      // 모든 문서 불러오기
-      const queryVal = query(collection(db, 'post-item'), orderBy('date', 'desc'));
-      const querySnapshot = await getDocs(queryVal);
-      querySnapshot.forEach(doc => {
-        const data = {
-          postId: doc.id,
-          ...doc.data(),
-        };
-        originData.push(data);
-      });
-      console.log('originData', originData);
-      const newCon = originData.filter(item => {
-        console.log('여기여기 ', editItemId);
-        return item.postId === editItemId;
-      });
-      setOriginalData(...newCon);
-      console.log('originalData', originalData);
-    };
-    read();
-  }, [editList]);
+  const detailPage = async item => {
+    const q = query(collection(db, 'users'), where('uid', '==', item.uid));
+    const querySnapshot = await getDocs(q);
+    let postProfileImg;
+    await querySnapshot.forEach(doc => {
+      postProfileImg = doc.data().profileImg;
+    });
+    navigate('/detail', {
+      state: {
+        uid: item.uid,
+        postId: item.postId,
+        nickName: item.nickName,
+        contents: item.contents,
+        photoURL: item.photoURL,
+        date: item.date,
+        likeCount: item.likeCount,
+        postProfileImg: postProfileImg,
+      },
+    });
+  };
 
   return (
     <StCardContainer>
@@ -108,7 +107,7 @@ function MyPosts() {
         .map(item => {
           return (
             <StCard key={item.id}>
-              <StImg id="img-wrap">
+              <StImg id="img-wrap" onClick={() => detailPage(item)}>
                 <img src={item.photoURL} alt="" />
               </StImg>
               <StContents>
@@ -133,17 +132,7 @@ function MyPosts() {
             </StCard>
           );
         })}
-      <EditPostModal
-        editItemId={editItemId}
-        isUserTrue={isUserTrue}
-        isOpen={isOpen}
-        closeModal={closeModal}
-        originalData={originalData}
-        setOriginalData={setOriginalData}
-        //모달인풋사진관련
-        imgFile={imgFile}
-        setImgFile={setImgFile}
-      />
+      <EditPostModal isOpen={isOpen} closeModal={closeModal} isUserTrue={isUserTrue} eachItemContent={eachItemContent} eachItemId={eachItemId} imgFile={imgFile} setImgFile={setImgFile} />
     </StCardContainer>
   );
 }
@@ -154,9 +143,12 @@ const StCardContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
-  width: 1300px;
+  width: 1200px;
   margin: 0 auto;
   padding: 50px 0;
+  @media only screen and (max-width: 1200px) {
+    width: 100%;
+  }
   @media only screen and (max-width: 890px) {
     gap: 20px;
   }
@@ -166,6 +158,7 @@ const StCard = styled.div`
   width: calc((100% - 90px) / 4);
   position: relative;
   transition: all 0.3s;
+  cursor: pointer;
   @media only screen and (max-width: 1200px) {
     width: calc((100% - 60px) / 3);
   }

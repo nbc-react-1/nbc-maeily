@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import { collection, query, onSnapshot, orderBy, getDocs } from 'firebase/firestore';
-import Layout from './Layout';
 import { useNavigate } from 'react-router-dom';
 import { where } from 'firebase/firestore';
-import Like from './Like';
+import Like from '../Like';
+import Layout from '../Layout';
 
 const PostList = () => {
   const navigate = useNavigate();
   const [post, setPost] = useState([]);
 
-  // 데이터 리스트로 불러오기
   useEffect(() => {
-    console.log('postList');
     const fetchData = async () => {
       const queryValue = query(collection(db, 'post-item'), orderBy('date', 'desc'));
       const unsubscribe = onSnapshot(queryValue, querySnapshot => {
@@ -73,30 +71,33 @@ const PostList = () => {
 
 export default PostList;
 
-//list 목록
 const StCardContainer = styled.div`
+  width: 1300px;
   display: flex;
   flex-wrap: wrap;
-  gap: 30px;
-  max-width: 1300px;
-  min-width: 1000px;
-
+  gap: 1vw;
   margin: 0 auto;
   flex-direction: column;
-  align-content: flex;
+  align-content: flex-start;
   height: 3000px;
-  overflow: hidden;
+  transition: all 0.3s;
+  @media only screen and (max-width: 1300px) {
+    width: 100%;
+  }
 `;
 
 const StCard = styled.div`
   border: none;
-  width: calc((100% - 90px) / 4);
+  width: calc((100% - 3vw) / 4);
   cursor: pointer;
   position: relative;
-  flex: 0 0 150px;
-  flex-basis: 100px;
+  @media only screen and (max-width: 1200px) {
+    width: calc((100% - 2vw) / 3);
+  }
+  @media only screen and (max-width: 890px) {
+    width: calc((100% - 2vw) / 2);
+  }
 `;
-
 const StImg = styled.div`
   overflow: hidden;
 

@@ -11,7 +11,6 @@ const Login = () => {
 
   const handleSignIn = async e => {
     e.preventDefault();
-    console.log('handleSignIn');
     setLoadingBtn(true);
     const email = e.target[0].value;
     const password = e.target[1].value;
@@ -26,8 +25,7 @@ const Login = () => {
   };
 
   const handlePassword = () => {
-    console.log('handlePassword');
-    const email = prompt('email');
+    const email = prompt('가입된 email을 입력해주세요');
 
     if (!email) {
       return alert('이메일을 입력해주세요');

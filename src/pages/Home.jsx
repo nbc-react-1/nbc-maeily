@@ -1,8 +1,8 @@
 import React from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
-import Banner from '../components/Banner';
-import PostList from '../components/PostList';
+import Banner from '../components/home/Banner';
+import PostList from '../components/home/PostList';
 
 const Home = () => {
   return (

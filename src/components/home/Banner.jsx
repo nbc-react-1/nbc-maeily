@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CreatePostModal from '../components/modal/CreatePostModal';
+import CreatePostModal from '../modal/CreatePostModal';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -119,6 +119,17 @@ const BannerContent = styled.div`
     height: 100%;
     color: white;
     position: absolute;
+  }
+
+  @media only screen and (max-width: 560px) {
+    h1 {
+      font-size: 36px;
+      margin-bottom: 15px;
+    }
+    h2 {
+      font-size: 21px;
+      margin-bottom: 15px;
+    }
   }
 `;
 

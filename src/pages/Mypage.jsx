@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import MyPosts from '../components/MyPosts';
+import MyPosts from '../components/mypage/MyPosts';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
-import { useSelector } from 'react-redux';
-import MyInfo from '../components/MyInfo';
+import MyInfo from '../components/mypage/MyInfo';
 import Layout from '../components/Layout';
 
 const Mypage = () => {
@@ -27,17 +27,14 @@ const Mypage = () => {
           <NavigationText>
             <span onClick={() => handleTabChange('info')}>회원정보 보기</span> | <span onClick={() => handleTabChange('posts')}>내가 쓴 게시글</span>
           </NavigationText>
-          {/* 내용에 따라 조건부로 컴포넌트를 렌더링 */}
           {activeTab === 'info' && (
             <div>
               <MyInfo />
-              {/* 회원정보 표시 */}
             </div>
           )}
           {activeTab === 'posts' && (
             <div>
               <MyPosts />
-              {/* 내가 쓴 게시글 표시 */}
             </div>
           )}
         </MypageContainer>
