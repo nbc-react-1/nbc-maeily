@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { styled } from 'styled-components';
 import Layout from '../components/Layout';
 import moment from 'moment';
-import { addDoc, collection, doc, getDocs, query, setDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, onSnapshot, orderBy, getDocs, query, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import Like from '../components/Like';
 import { useNavigate } from 'react-router-dom';
@@ -24,15 +24,25 @@ const Detail = () => {
   const timeDiff = nowDate - postDate;
   const hours = Math.floor(timeDiff / (1000 * 60 * 60));
   const minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
-  const seconds = Math.floor((timeDiff / 1000) % 60);
-  //댓글
-  const [comments, setComments] = useState([]); //모든 댓글
-  const [cmtContents, setCmtContents] = useState(''); //새로운 댓글
-  const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
 
+  //댓글
+  const [cmtContents, setCmtContents] = useState('');
+  const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
+  const [filteredComments, setFilteredComments] = useState([]);
   useEffect(() => {
-    const likesAllData = [];
     const fetchData = async () => {
+      const likesAllData = [];
+      const cmtQueryValue = query(collection(db, 'comments'), orderBy('date', 'desc'));
+      const unsubscribe = onSnapshot(cmtQueryValue, querySnapshot => {
+        const commentAllData = querySnapshot.docs.map(doc => ({
+          postId: doc.id,
+          ...doc.data(),
+        }));
+
+        const filtered = commentAllData.filter(item => item.postId === postData.postId);
+        setFilteredComments(filtered);
+        return unsubscribe;
+      });
       const likesValue = query(collection(db, 'likes'));
       const likeQuerySnapshot = await getDocs(likesValue);
       likeQuerySnapshot.forEach(doc => {
@@ -46,7 +56,7 @@ const Detail = () => {
       setLike(likesData);
     };
     fetchData();
-  }, [likeStatus]);
+  }, [postData.postId, likeStatus]);
 
   const addComment = async event => {
     event.preventDefault();
@@ -57,22 +67,12 @@ const Detail = () => {
         date: nowTime,
         nickName: storeInfo.nickname,
         profileImg: storeInfo.profileImg,
+        postId: postData.postId,
       });
-      console.log('Document written with ID: ', docRef.id);
     } catch (e) {
       console.error('Error adding document: ', e);
     }
 
-    // const newComment = {
-    //   uid: storeInfo.uid,
-    //   cmtContents,
-    //   date: nowTime,
-    //   nickName: storeInfo.nickname,
-    //   profileImg: storeInfo.profileImg,
-    // };
-    // const newCommentArr = [...comments, newComment];
-    // setComments(newCommentArr);
-    // console.log('comments', comments);
     setCmtContents('');
   };
 
@@ -161,10 +161,10 @@ const Detail = () => {
           </CommentForm>
         </CommentSection>
         {/* 댓글 리스트 */}
-
-        {comments.map(item => {
+        {filteredComments.map(item => {
           return (
-            <CommentList>
+            <CommentList key={item.uid}>
+              {' '}
               <ProfileImg>
                 <img src={item.profileImg} alt="" />
               </ProfileImg>
@@ -174,9 +174,8 @@ const Detail = () => {
                     <Editer>{item.nickName}</Editer>
                     <EditCon>{item.cmtContents}</EditCon>
                   </EditWrap>
-                  <SmallFont>{item.date}</SmallFont>
+                  <SmallFont>{item.date.toString()}</SmallFont>
                 </div>
-                <div>하트</div>
               </CmtContents>
             </CommentList>
           );
@@ -207,7 +206,9 @@ const Wrap = styled.div`
   width: 40%;
   margin: 50px auto;
 `;
-const PostBox = styled.div``;
+const PostBox = styled.div`
+  min-width: 400px;
+`;
 const PostHeader = styled.div`
   display: flex;
   align-items: center;
@@ -252,12 +253,15 @@ const SmallFont = styled.p`
 const CommentSection = styled.div``;
 const CommentForm = styled.form`
   margin: 40px 0;
+  min-width: 400px;
 `;
 const CommentInputLabel = styled.label`
   display: block;
   width: 100%;
   font-size: 0.8rem;
   color: #8a8a8a;
+
+  min-width: 400px;
 `;
 const CommentInput = styled.input`
   width: 80%;
@@ -313,6 +317,7 @@ const StButton = styled.button`
 const CommentList = styled.div`
   display: flex;
   margin: 15px 0;
+  min-width: 400px;
 `;
 
 const CmtContents = styled.div`
