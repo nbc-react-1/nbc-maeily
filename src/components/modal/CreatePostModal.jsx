@@ -35,6 +35,7 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
             photoURL: url,
             date: nowTime,
             nickName: storeInfo.nickname,
+            likeCount: 0,
             // profile,
           });
         });

@@ -149,13 +149,12 @@ function MyPosts() {
 }
 
 export default MyPosts;
-// list style
+
 const StCardContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
-  max-width: 1300px;
-  min-height: 500px;
+  width: 1300px;
   margin: 0 auto;
   padding: 50px 0;
   @media only screen and (max-width: 890px) {
@@ -166,9 +165,6 @@ const StCard = styled.div`
   border: none;
   width: calc((100% - 90px) / 4);
   position: relative;
-  // background-image: url(${props => props.url});
-  // background-position: center;
-  // background-size: cover;
   transition: all 0.3s;
   @media only screen and (max-width: 1200px) {
     width: calc((100% - 60px) / 3);
@@ -179,20 +175,17 @@ const StCard = styled.div`
 `;
 const StImg = styled.div`
   width: 100%;
-  height: 420px;
+  height: 300px;
   border-radius: 10px;
   overflow: hidden;
-
   img {
     object-fit: cover;
+    width: 100%;
+    height: 100%;
     position: relative;
     top: 50%;
     left: 50%;
-    // width: 100%;
-
-    border-radius: 10px;
     transform: translate(-50%, -50%);
-    background-image: url(${props => props.url});
   }
   @media only screen and (max-width: 590px) {
     height: 170px;
@@ -221,7 +214,7 @@ const StEditButton = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  // width: 50%;
+  width: 60%;
 `;
 const StEditBubble = styled.div`
   position: relative;
