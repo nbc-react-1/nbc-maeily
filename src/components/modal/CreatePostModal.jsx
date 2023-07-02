@@ -105,6 +105,7 @@ export default CreatePostModal;
 // modal
 const ModalBg = styled.div`
   width: 100%;
+  min-width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.2);
   position: fixed;
@@ -123,8 +124,9 @@ const ModalContents = styled.div`
   transform: translate(-50%, -50%);
   padding: 5%;
   overflow: scroll;
+  min-width: 400px;
 `;
-// 모달 닫기 컴포넌트
+
 const StModalCloseButton = styled.button`
   background-color: transparent;
   font-size: 38px;
@@ -140,18 +142,7 @@ const StSvg = styled.svg`
     scale: 1.2;
   }
 `;
-// const Label = styled.label`
-//   width: 100%;
-//   display: block;
-//   line-height: 35px;
-// `;
-const Input = styled.input`
-  width: 100%;
-  border: 0;
-  border: solid 1px #ddd;
-  padding: 10px;
-  border-radius: 5px;
-`;
+
 const InputArea = styled.textarea`
   width: 300px;
   height: 50px;

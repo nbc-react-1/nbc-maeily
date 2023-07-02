@@ -19,14 +19,13 @@ const Detail = () => {
   const timeDiff = nowDate - postDate;
   const hours = Math.floor(timeDiff / (1000 * 60 * 60));
   const minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
-  const seconds = Math.floor((timeDiff / 1000) % 60);
 
   //댓글
   const [comments, setComments] = useState([]); //모든 댓글
   const [cmtContents, setCmtContents] = useState(''); //새로운 댓글
   const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
 
-  const commentAllData = [];
+  const [filteredComments, setFilteredComments] = useState([]);
 
   // 불러오기
   useEffect(() => {
@@ -37,12 +36,15 @@ const Detail = () => {
           postId: doc.id,
           ...doc.data(),
         }));
-        setComments(commentAllData);
+
+        // Filter comments based on the current post ID
+        const filtered = commentAllData.filter(item => item.postId === postData.postId);
+        setFilteredComments(filtered);
       });
       return unsubscribe;
     };
     fetchData();
-  }, []);
+  }, [postData.postId]);
 
   console.log(comments);
   // 등록
@@ -102,9 +104,11 @@ const Detail = () => {
           </CommentForm>
         </CommentSection>
         {/* 댓글 리스트 */}
-        {comments.map(item => {
+        {filteredComments.map(item => {
           return (
-            <CommentList>
+            <CommentList key={item.uid}>
+              {' '}
+              {/* uid를 고유한 키 값으로 사용 */}
               <ProfileImg>
                 <img src={item.profileImg} alt="" />
               </ProfileImg>
@@ -114,7 +118,7 @@ const Detail = () => {
                     <Editer>{item.nickName}</Editer>
                     <EditCon>{item.cmtContents}</EditCon>
                   </EditWrap>
-                  <SmallFont>{item.date}</SmallFont>
+                  <SmallFont>{item.date.toString()}</SmallFont>
                 </div>
                 <div>하트</div>
               </CmtContents>
@@ -136,7 +140,9 @@ const Wrap = styled.div`
   width: 40%;
   margin: 50px auto;
 `;
-const PostBox = styled.div``;
+const PostBox = styled.div`
+  min-width: 400px;
+`;
 const PostHeader = styled.div`
   display: flex;
   align-items: center;
@@ -181,12 +187,15 @@ const SmallFont = styled.p`
 const CommentSection = styled.div``;
 const CommentForm = styled.form`
   margin: 40px 0;
+  min-width: 400px;
 `;
 const CommentInputLabel = styled.label`
   display: block;
   width: 100%;
   font-size: 0.8rem;
   color: #8a8a8a;
+
+  min-width: 400px;
 `;
 const CommentInput = styled.input`
   width: 80%;
@@ -242,6 +251,7 @@ const StButton = styled.button`
 const CommentList = styled.div`
   display: flex;
   margin: 15px 0;
+  min-width: 400px;
 `;
 
 const CmtContents = styled.div`
