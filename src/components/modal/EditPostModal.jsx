@@ -49,14 +49,22 @@ function EditPostModal({ isOpen, closeModal, editItemId, originalData, imgFile, 
   };
 
   //인풋사진
-  const handleChangeFile = () => {
-    const file = imgRef.current.files[0];
-    setSelectedFile(file);
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setImgFile(reader.result);
-    };
+  const handleChangeFile = e => {
+    if (e.target.files.length === 0) {
+      return '';
+    } else {
+      const file = imgRef.current.files[0];
+      setSelectedFile(file);
+      const reader = new FileReader();
+      if (file) {
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+          setImgFile(reader.result);
+        };
+      } else {
+        return;
+      }
+    }
   };
 
   return createPortal(
