@@ -22,7 +22,6 @@ export const ModalContent = styled.div`
 `;
 
 const Modal = ({ children }) => {
- 
   return (
     <ModalOverlay>
       <ModalContent>{children}</ModalContent>

@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { styled } from 'styled-components';
 import { db } from '../firebase';
 import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
+import { Link } from 'react-router-dom';
 
 const PostList = () => {
   const [post, setPost] = useState([]);
@@ -37,14 +38,16 @@ const PostList = () => {
     <StCardContainer>
       {post.map(item => (
         <StCard key={item.id}>
-          <StImg>
-            <img src={item.photoURL} alt="" />
-            <StHover>
-              <StId>{item.id}</StId>
-              <StContent>{item.contents}</StContent>
-              <StNick>{item.nickName}</StNick>
-            </StHover>
-          </StImg>
+          <Link to={`/detail`}>
+            <StImg>
+              <img src={item.photoURL} alt="" />
+              <StHover>
+                <StId>{item.id}</StId>
+                <StContent>{item.contents}</StContent>
+                <StNick>{item.nickName}</StNick>
+              </StHover>
+            </StImg>
+          </Link>
         </StCard>
       ))}
     </StCardContainer>
@@ -98,7 +101,7 @@ const StHover = styled.div`
   right: 0;
   bottom: 0;
   width: 100%;
-  height: 100%;
+  height: 99%;
   opacity: 0;
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 10px;

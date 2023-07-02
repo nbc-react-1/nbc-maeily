@@ -77,8 +77,8 @@ const LogDiv = styled.div`
 `;
 
 const LogLeft = styled.div`
-  width: 45vw;
-  background-image: url('https://i0.wp.com/styledumonde.com/wp-content/uploads/2019/08/Rianne-Van-Rompaey-Kiki-Willems-and-Binx-Walton-by-STYLEDUMONDE-Street-Style-Fashion-Photography20180912_48A9462.jpg?w=1400&ssl=1');
+  width: 50vw;
+  background-image: url('https://github.com/nbc-react-1/nbc-maeily/assets/133937368/fec3dd67-8da7-45a6-8811-e653974c02d4');
   background-color: #f4f5f9;
   height: 100vh;
   background-position: center;
@@ -101,7 +101,7 @@ const LogLeft = styled.div`
 
 const LogRight = styled.div`
   background-color: white;
-  width: 60vw;
+  width: 55vw;
   padding: 100px 30px;
   border-bottom-left-radius: 30px;
   border-top-left-radius: 30px;
