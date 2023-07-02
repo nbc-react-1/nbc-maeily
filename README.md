@@ -1,6 +1,7 @@
 ## [매일리룩](https://nbc-maeily.vercel.app/)
 
-매일 데일리 룩을 올려 공유하고 저장하여 자신만의 룩북을 완성할 수 있는 웹앱 서비스입니다.
+리액트를 기반으로 한 데일리룩 공유 웹앱입니다.<br>
+매일매일 데일리룩을 올리고 저장하여 자신만의 룩북을 완성할 수 있습니다<br>
 
 ---
 
@@ -33,27 +34,27 @@ $ yarn start
 
 ## 프로젝트 구조
 
-📦src
-┣ 📂components 👉 공통 컴포넌트<br>
+📦src<br>
+┣ 📂components&emsp; 👉 공통 컴포넌트<br>
 ┃ ┣ 📜Button.jsx<br>
 ┃ ┣ 📜Footer.jsx<br>
 ┃ ┣ 📜Layout.jsx<br>
 ┃ ┣ 📜Like.jsx<br>
 ┃ ┣ 📜Modal.jsx<br>
 ┃ ┗ 📜Navigation.jsx<br>
-┃ ┣ 📂detail 👉 상세 페이지에서 사용되는 컴포넌트<br>
-┃ ┃ ┗ 📜CmtInputForm.jsx 👉 댓글 입력<br>
-┃ ┣ 📂home 👉 메인 페이지에서 사용되는 컴포넌트<br>
-┃ ┃ ┣ 📜Banner.jsx 👉 배너<br>
-┃ ┃ ┗ 📜PostList.jsx 👉 게시글 불러오기<br>
-┃ ┣ 📂modal 👉 사용되는 모달<br>
-┃ ┃ ┣ 📜CreatePostModal.jsx 👉 게시글 작성<br>
-┃ ┃ ┣ 📜EditPostModal.jsx 👉 게시글 수정<br>
-┃ ┃ ┗ 📜JoinUserModal.jsx 👉 회원가입<br>
-┃ ┣ 📂mypage 👉 마이 페이지에서 사용되는 컴포넌트<br>
-┃ ┃ ┣ 📜MyInfo.jsx 👉 회원정보 불러오기, 수정 및 탈퇴<br>
-┃ ┃ ┗ 📜MyPosts.jsx 👉 내가 쓴 게시글 불러오기, 수정 및 탈퇴<br>
-┣ 📂pages<br>
+┃ ┣ 📂modal &emsp;👉 모달<br>
+┃ ┃ ┣ 📜CreatePostModal.jsx&emsp; 👉 게시글 작성<br>
+┃ ┃ ┣ 📜EditPostModal.jsx &emsp;👉 게시글 수정<br>
+┃ ┃ ┗ 📜JoinUserModal.jsx &emsp;👉 회원가입<br>
+┃ ┣ 📂detail &emsp;👉 상세 페이지에서 사용되는 컴포넌트<br>
+┃ ┃ ┗ 📜CmtInputForm.jsx&emsp; 👉 댓글 입력<br>
+┃ ┣ 📂home &emsp;👉 메인 페이지에서 사용되는 컴포넌트<br>
+┃ ┃ ┣ 📜Banner.jsx &emsp;👉 배너<br>
+┃ ┃ ┗ 📜PostList.jsx &emsp;👉 게시글 불러오기<br>
+┃ ┣ 📂mypage &emsp;👉 마이 페이지에서 사용되는 컴포넌트<br>
+┃ ┃ ┣ 📜MyInfo.jsx &emsp;👉 회원정보 불러오기, 수정 및 탈퇴<br>
+┃ ┃ ┗ 📜MyPosts.jsx&emsp; 👉 내가 쓴 게시글 불러오기, 수정 및 탈퇴<br>
+┣ 📂pages&emsp; 👉 페이지 이동<br>
 ┃ ┣ 📜Detail.jsx<br>
 ┃ ┣ 📜Home.jsx<br>
 ┃ ┣ 📜Login.jsx<br>
