@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import CreatePostModal from '../components/modal/CreatePostModal';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const Banner = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,9 +10,16 @@ const Banner = () => {
   const [contents, setContents] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [reload, setReload] = useState(false);
+  const navigation = useNavigate();
 
-  //리덕스 유저정보 .uid   //파이어스토어
-  const openModal = () => setIsOpen(true);
+  const { isUserTrue } = useSelector(state => state.userLogIn);
+
+  const openModal = () => {
+    if (!isUserTrue) {
+      return navigation('/login');
+    }
+    setIsOpen(true);
+  };
   const closeModal = () => {
     setIsOpen(false);
     setContents('');
@@ -20,8 +29,8 @@ const Banner = () => {
   return (
     <BannerWrapper url={'https://github.com/nbc-react-1/nbc-maeily/assets/133937368/79f8a899-05af-4c09-a873-89729975d64d'}>
       <BannerContent>
-        <h1>배너 사진 로딩 너무 오래걸리는데 왤까요?</h1>
-        <h2>사진 크기가 너무 큰가?</h2>
+        <h1>지금 가장 핫한 썸머룩</h1>
+        <h2>당신의 매일리룩을 공유해주세요!</h2>
         <button onClick={openModal}>Add Photo</button>
         <CreatePostModal reload={reload} setReload={setReload} isOpen={isOpen} closeModal={closeModal} post={post} setPost={setPost} selectedFile={selectedFile} setSelectedFile={setSelectedFile} contents={contents} setContents={setContents} />
       </BannerContent>
@@ -36,7 +45,6 @@ const BannerWrapper = styled.div`
   background-color: #f4f5f9;
   border-bottom-left-radius: 50px;
   border-bottom-right-radius: 50px;
-  margin-bottom: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -57,20 +65,20 @@ const BannerContent = styled.div`
   margin-bottom: 60px;
 
   & > h1 {
-    font-weight: 700;
+    font-weight: 900;
     font-size: 40px;
-    opacity: 85%;
+    opacity: 90%;
     color: #fff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
     margin-bottom: 10px;
   }
 
   & > h2 {
-    font-weight: 400;
+    font-weight: 500;
     font-size: 25px;
-    opacity: 85%;
+    opacity: 90%;
     color: #fff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
   }
 
   & > button {

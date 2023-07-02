@@ -4,8 +4,11 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../../firebase';
 import { collection, doc, getDocs, query, setDoc } from 'firebase/firestore';
 import Modal from '../Modal';
+import { useNavigate } from 'react-router-dom';
 
 const JoinUserModal = () => {
+  const navigation = useNavigate();
+
   const emailRef = useRef('');
   const nicknameRef = useRef('');
 
@@ -81,9 +84,10 @@ const JoinUserModal = () => {
       if (overlapNickname === -1 || overlapNickname === undefined) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         console.log('userCredential', userCredential);
-        const newUsers = { uid: userCredential.user.uid, email, password, nickname, name, profileImg: 'https://firebasestorage.googleapis.com/v0/b/maily-acc5a.appspot.com/o/default.png?alt=media&token=2b70c710-11c6-444b-a416-df5db34da880' };
+        const newUsers = { uid: userCredential.user.uid, email, password, nickname, name, profileImg: 'https://i.pinimg.com/564x/c8/4a/26/c84a26e10efef9989716f06e9cc91960.jpg' };
         setDoc(doc(db, 'users', userCredential.user.uid), newUsers);
         if (userCredential) alert('회원가입이 정상적으로 처리되었습니다!');
+        navigation('/');
         closeModal();
       } else if (overlapNickname >= 0) {
         alert('이미 존재하는 닉네임 입니다. 다른 닉네임을 사용해 보세요!');

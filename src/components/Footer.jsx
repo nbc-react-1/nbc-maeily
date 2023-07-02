@@ -6,7 +6,7 @@ const Footer = () => {
     <FooterContainer>
       <FooterLogo>
         <a href="#">
-          <img src="https://github.com/nbc-react-1/nbc-maeily/assets/126348461/4dbb97ce-8af9-4d22-a851-0b527105077a" alt="maeilylook-logo" />
+          <img src="https://github.com/nbc-react-1/nbc-maeily/assets/133937368/771d6f24-e516-4175-9947-f15be2e6152f" alt="maeilylook-logo" />
         </a>
       </FooterLogo>
       <p>내일배움캠프 React 6</p>

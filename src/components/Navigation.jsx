@@ -33,9 +33,9 @@ const Navigation = () => {
         href="
       "
       >
-        <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/133937368/250246793-23f60fee-7a0f-47bd-a4ed-12b27aac0a7b.svg" alt="로고 이미지" onClick={goToHome} />
+        <NavLogoImg location={location.pathname} src="https://github.com/nbc-react-1/nbc-maeily/assets/133937368/a5cfce45-18ad-4747-ba31-dfffefe2c75f" alt="로고 이미지" onClick={goToHome}></NavLogoImg>
       </a>
-      <NextLogo>
+      <NextLogo location={location.pathname}>
         <span onClick={goToHome}>Home</span>
       </NextLogo>
       <NavDiv>
@@ -74,11 +74,17 @@ const NavContainer = styled.div`
   }
 `;
 
+const NavLogoImg = styled.img`
+  filter: ${props => (props.location === '/login' ? 'invert(100%)' : 'invert(0%)')};
+  width: auto;
+  height: 20px;
+`;
+
 const NextLogo = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 20px;
+  margin: 10px;
   position: relative;
 
   span::after {
@@ -88,7 +94,7 @@ const NextLogo = styled.span`
     height: 2px;
     left: 0;
     bottom: -3px;
-    background-color: black;
+    background-color: ${props => (props.location === '/login' ? 'white' : 'black')};
     transform: scaleX(0);
     transition: all ease-in-out 0.3s;
   }
@@ -102,6 +108,7 @@ const NextLogo = styled.span`
     cursor: pointer;
     font-family: sans-serif;
     font-size: 15px;
+    color: ${props => (props.location === '/login' ? 'white' : 'black')};
   }
   img {
     width: 100px;
@@ -115,6 +122,7 @@ const NavDiv = styled.div`
   right: 30px;
   display: flex;
   align-items: center;
+
   & > button {
     padding: 10px 17px;
     margin: 5px 10px;
@@ -158,7 +166,7 @@ const NavDiv = styled.div`
 const NavMypageImg = styled.span`
   width: 35px;
   height: 35px;
-  border: 1px solid gray;
+  // border: 1px solid gray;
   border-radius: 50%;
   margin-right: 10px;
   background-image: url(${props => props.url});
