@@ -12,7 +12,7 @@ const Like = ({ item }) => {
   const [likeStatus, setLikeStatus] = useState(false);
   const [like, setLike] = useState([]);
   const { storeInfo } = useSelector(state => state.userLogIn);
-  v;
+
   // 좋아요 데이터 리스트로 불러오기
   useEffect(() => {
     const likesAllData = [];
