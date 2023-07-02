@@ -1,10 +1,6 @@
-## 프로젝트 소개: 매일리룩
+## [매일리룩](https://nbc-maeily.vercel.app/)
 
-리액트를 기반으로 한 데일리룩 공유 웹앱
-
----
-
-## 프로젝트 설명
+매일 데일리 룩을 올려 공유하고 저장하여 자신만의 룩북을 완성할 수 있는 웹앱 서비스입니다.
 
 ---
 
@@ -36,6 +32,37 @@ $ yarn start
 ---
 
 ## 프로젝트 구조
+
+📦src
+┣ 📂components 👉 공통 컴포넌트
+┃ ┣ 📜Button.jsx
+┃ ┣ 📜Footer.jsx
+┃ ┣ 📜Layout.jsx
+┃ ┣ 📜Like.jsx
+┃ ┣ 📜Modal.jsx
+┃ ┗ 📜Navigation.jsx
+┃ ┣ 📂detail 👉 상세 페이지에서 사용되는 컴포넌트
+┃ ┃ ┗ 📜CmtInputForm.jsx 👉 댓글 입력
+┃ ┣ 📂home 👉 메인 페이지에서 사용되는 컴포넌트
+┃ ┃ ┣ 📜Banner.jsx 👉 배너
+┃ ┃ ┗ 📜PostList.jsx 👉 게시글 불러오기
+┃ ┣ 📂modal 👉 사용되는 모달
+┃ ┃ ┣ 📜CreatePostModal.jsx 👉 게시글 작성
+┃ ┃ ┣ 📜EditPostModal.jsx 👉 게시글 수정
+┃ ┃ ┗ 📜JoinUserModal.jsx 👉 회원가입
+┃ ┣ 📂mypage 👉 마이 페이지에서 사용되는 컴포넌트
+┃ ┃ ┣ 📜MyInfo.jsx 👉 회원정보 불러오기, 수정 및 탈퇴
+┃ ┃ ┗ 📜MyPosts.jsx 👉 내가 쓴 게시글 불러오기, 수정 및 탈퇴
+┣ 📂pages
+┃ ┣ 📜Detail.jsx
+┃ ┣ 📜Home.jsx
+┃ ┣ 📜Login.jsx
+┃ ┗ 📜Mypage.jsx
+┣ 📂redux
+┃ ┣ 📂config
+┃ ┃ ┗ 📜configStore.js
+┃ ┗ 📂modules
+┃ ┃ ┗ 📜userLogIn.js
 
 ---
 
