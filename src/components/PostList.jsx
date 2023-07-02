@@ -45,7 +45,6 @@ const PostList = () => {
         setPost(initialPostItem);
         setLike(likesData);
       });
-      console.log(post);
       return unsubscribe;
     };
     fetchData();

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { styled } from 'styled-components';
 import Layout from '../components/Layout';
 import moment from 'moment';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { db } from '../firebase';
 
 const Detail = () => {
@@ -20,11 +20,32 @@ const Detail = () => {
   const hours = Math.floor(timeDiff / (1000 * 60 * 60));
   const minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
   const seconds = Math.floor((timeDiff / 1000) % 60);
+
   //댓글
   const [comments, setComments] = useState([]); //모든 댓글
   const [cmtContents, setCmtContents] = useState(''); //새로운 댓글
   const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
 
+  const commentAllData = [];
+
+  // 불러오기
+  useEffect(() => {
+    const fetchData = () => {
+      const cmtQueryValue = query(collection(db, 'comments'), orderBy('date', 'desc'));
+      const unsubscribe = onSnapshot(cmtQueryValue, querySnapshot => {
+        const commentAllData = querySnapshot.docs.map(doc => ({
+          postId: doc.id,
+          ...doc.data(),
+        }));
+        setComments(commentAllData);
+      });
+      return unsubscribe;
+    };
+    fetchData();
+  }, []);
+
+  console.log(comments);
+  // 등록
   const addComment = async event => {
     event.preventDefault();
     try {
@@ -34,22 +55,12 @@ const Detail = () => {
         date: nowTime,
         nickName: storeInfo.nickname,
         profileImg: storeInfo.profileImg,
+        postId: postData.postId,
       });
-      console.log('Document written with ID: ', docRef.id);
     } catch (e) {
       console.error('Error adding document: ', e);
     }
 
-    // const newComment = {
-    //   uid: storeInfo.uid,
-    //   cmtContents,
-    //   date: nowTime,
-    //   nickName: storeInfo.nickname,
-    //   profileImg: storeInfo.profileImg,
-    // };
-    // const newCommentArr = [...comments, newComment];
-    // setComments(newCommentArr);
-    // console.log('comments', comments);
     setCmtContents('');
   };
   return (
