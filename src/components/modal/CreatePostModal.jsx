@@ -2,27 +2,22 @@ import React, { useRef, useState } from 'react';
 import { styled } from 'styled-components';
 import moment from 'moment/moment';
 import { createPortal } from 'react-dom';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { addDoc, collection, doc, getDocs, query } from 'firebase/firestore';
-import { auth, db, storage } from '../../firebase';
-import { StButton } from '../Button';
 import { useSelector } from 'react-redux';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { addDoc, collection } from 'firebase/firestore';
+import { auth, db, storage } from '../../firebase';
 
 function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, contents, setContents, setReload, reload }) {
-  // 게시글 등록
-  const imageRef = useRef('');
   const { storeInfo } = useSelector(state => state.userLogIn);
-
   const contentsOnchange = event => setContents(event.target.value);
+
   const addPostHandler = async event => {
     event.preventDefault();
     const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
     const storageRef = ref(storage, `${auth.currentUser.uid}/${selectedFile?.name}`);
 
-    //************************ */
-    if (!storageRef) {
+    if (!selectedFile) {
       alert('사진을 등록해주세요');
-      imageRef.current.focus();
     } else if (contents === '') {
       alert('내용을 입력해주세요');
     } else {
@@ -36,29 +31,35 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
             date: nowTime,
             nickName: storeInfo.nickname,
             likeCount: 0,
-            // profile,
           });
         });
       });
       setImgFile('');
       closeModal();
       setReload(!reload);
-      console.log('등록완료 ');
     }
   };
 
-  //////
   const [imgFile, setImgFile] = useState('');
   const imgRef = useRef();
 
-  const handleChangeFile = () => {
-    const file = imgRef.current.files[0];
-    setSelectedFile(file);
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setImgFile(reader.result);
-    };
+  const handleChangeFile = e => {
+    if (e.target.files.length === 0) {
+      setImgFile('');
+      setSelectedFile('');
+    } else {
+      const file = imgRef.current.files[0];
+      setSelectedFile(file);
+      const reader = new FileReader();
+      if (file) {
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+          setImgFile(reader.result);
+        };
+      } else {
+        return;
+      }
+    }
   };
 
   return createPortal(
@@ -70,7 +71,6 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
               event.stopPropagation();
             }}
           >
-            {/* 모달 닫기 버튼 */}
             <StModalCloseButton onClick={closeModal}>
               <StSvg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
                 <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z" />
@@ -102,7 +102,6 @@ function CreatePostModal({ isOpen, closeModal, selectedFile, setSelectedFile, co
 }
 export default CreatePostModal;
 
-// modal
 const ModalBg = styled.div`
   width: 100%;
   min-width: 100%;
@@ -125,6 +124,9 @@ const ModalContents = styled.div`
   padding: 5%;
   overflow: scroll;
   min-width: 400px;
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+  }
 `;
 
 const StModalCloseButton = styled.button`
@@ -161,7 +163,6 @@ const InputArea = styled.textarea`
   }
 `;
 
-// button
 const Button = styled.button`
   padding: 10px 17px;
   margin: 5px 10px;

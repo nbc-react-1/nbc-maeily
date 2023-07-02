@@ -1,18 +1,18 @@
 import React, { useRef, useState } from 'react';
-import { styled } from 'styled-components';
 import moment from 'moment/moment';
+import { styled } from 'styled-components';
 import { createPortal } from 'react-dom';
 import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { auth, storage } from '../../firebase';
+import { db, auth, storage } from '../../firebase';
 import { useSelector } from 'react-redux';
 
-function EditPostModal({ isOpen, closeModal, editItemId, originalData, imgFile, setImgFile }) {
-  const imgRef = useRef();
+function EditPostModal({ isOpen, closeModal, eachItemId, eachItemContent, imgFile, setImgFile }) {
   const [contents, setContents] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+
   const { storeInfo } = useSelector(state => state.userLogIn);
+  const imgRef = useRef();
 
   // 게시글 수정
   const editPostHandler = async event => {
@@ -20,7 +20,7 @@ function EditPostModal({ isOpen, closeModal, editItemId, originalData, imgFile, 
     const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
 
     if (selectedFile === null) {
-      const docRef = doc(db, 'post-item', editItemId);
+      const docRef = doc(db, 'post-item', eachItemId);
       await updateDoc(docRef, {
         uid: auth.currentUser.uid,
         contents,
@@ -30,10 +30,9 @@ function EditPostModal({ isOpen, closeModal, editItemId, originalData, imgFile, 
       });
     } else {
       const storageRef = ref(storage, `${auth.currentUser.uid}/${selectedFile?.name}`);
-
       uploadBytes(storageRef, selectedFile).then(snapshot => {
         getDownloadURL(storageRef).then(async url => {
-          const docRef = doc(db, 'post-item', editItemId);
+          const docRef = doc(db, 'post-item', eachItemId);
           await updateDoc(docRef, {
             uid: auth.currentUser.uid,
             contents,
@@ -48,15 +47,23 @@ function EditPostModal({ isOpen, closeModal, editItemId, originalData, imgFile, 
     closeModal();
   };
 
-  //인풋사진
-  const handleChangeFile = () => {
-    const file = imgRef.current.files[0];
-    setSelectedFile(file);
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setImgFile(reader.result);
-    };
+  // 사진 변경
+  const handleChangeFile = e => {
+    if (e.target.files.length === 0) {
+      return '';
+    } else {
+      const file = imgRef.current.files[0];
+      setSelectedFile(file);
+      const reader = new FileReader();
+      if (file) {
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+          setImgFile(reader.result);
+        };
+      } else {
+        return;
+      }
+    }
   };
 
   return createPortal(
@@ -69,14 +76,13 @@ function EditPostModal({ isOpen, closeModal, editItemId, originalData, imgFile, 
             }}
           >
             <StPostH2>게시글 수정</StPostH2>
-            {/* 모달 닫기 버튼 */}
             <StModalCloseButton onClick={closeModal}>
               <StSvg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
                 <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z" />
               </StSvg>
             </StModalCloseButton>
 
-            <form onSubmit={editPostHandler} style={{ clear: 'both', overflow: 'scroll' }}>
+            <EditForm onSubmit={editPostHandler}>
               <InputImgContainer>
                 <input style={{ display: 'none' }} name="file" id="file" type="file" ref={imgRef} onChange={handleChangeFile} />
                 <InputImg url={imgFile}>
@@ -87,12 +93,12 @@ function EditPostModal({ isOpen, closeModal, editItemId, originalData, imgFile, 
                   </ImgLabel>
                 </InputImg>
 
-                <InputArea placeholder={originalData.contents} value={contents} onChange={event => setContents(event.target.value)} />
+                <InputArea placeholder={eachItemContent} value={contents} onChange={event => setContents(event.target.value)} />
               </InputImgContainer>
               <Button type="submit" style={{ float: 'right' }}>
                 등록
               </Button>
-            </form>
+            </EditForm>
           </ModalContents>
         </ModalBg>
       )}
@@ -103,8 +109,9 @@ function EditPostModal({ isOpen, closeModal, editItemId, originalData, imgFile, 
 export default EditPostModal;
 const StPostH2 = styled.h2`
   font-weight: bold;
-  font-size: 1.4rem;
+  font-size: 15px;
   margin: 0 0 20px 0;
+  font-family: sans-serif;
 `;
 // modal
 const ModalBg = styled.div`
@@ -130,7 +137,10 @@ const ModalContents = styled.div`
     width: 90%;
   }
 `;
-// 모달 닫기 컴포넌트
+// 모달 컴포넌트
+const EditForm = styled.form`
+  clear: both;
+`;
 const StModalCloseButton = styled.button`
   background-color: transparent;
   font-size: 38px;

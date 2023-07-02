@@ -2,8 +2,12 @@
 v2.0 | 20110126
 License: none (public domain)
 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;1,300;1,400;1,500&display=swap');
+
 * {
   box-sizing: border-box;
+  font-family: 'Roboto', 'Noto Sans KR', sans-serif;
+  font-weight: normal;
 }
 
 

@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
-import { styled } from 'styled-components';
-import Layout from '../components/Layout';
-import moment from 'moment';
-import { addDoc, collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { collection, doc, onSnapshot, orderBy, getDocs, query, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { styled } from 'styled-components';
+import moment from 'moment';
+import uuid from 'react-uuid';
+import Layout from '../components/Layout';
+import CmtInputForm from '../components/detail/CmtInputForm';
 
 const Detail = () => {
+  const navigate = useNavigate();
+  const [likeStatus, setLikeStatus] = useState(false);
+  const [like, setLike] = useState([]);
   const { isUserTrue, storeInfo } = useSelector(state => state.userLogIn);
   const location = useLocation();
   const postData = location.state;
@@ -21,15 +26,14 @@ const Detail = () => {
   const minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
 
   //댓글
-  const [comments, setComments] = useState([]); //모든 댓글
-  const [cmtContents, setCmtContents] = useState(''); //새로운 댓글
+  const [cmtContents, setCmtContents] = useState('');
   const nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
-
   const [filteredComments, setFilteredComments] = useState([]);
+  const cmtChangeHandler = event => setCmtContents(event.target.value);
 
-  // 불러오기
   useEffect(() => {
-    const fetchData = () => {
+    const fetchData = async () => {
+      const likesAllData = [];
       const cmtQueryValue = query(collection(db, 'comments'), orderBy('date', 'desc'));
       const unsubscribe = onSnapshot(cmtQueryValue, querySnapshot => {
         const commentAllData = querySnapshot.docs.map(doc => ({
@@ -37,34 +41,59 @@ const Detail = () => {
           ...doc.data(),
         }));
 
-        // Filter comments based on the current post ID
         const filtered = commentAllData.filter(item => item.postId === postData.postId);
         setFilteredComments(filtered);
+        return unsubscribe;
       });
-      return unsubscribe;
+      const likesValue = query(collection(db, 'likes'));
+      const likeQuerySnapshot = await getDocs(likesValue);
+      likeQuerySnapshot.forEach(doc => {
+        const data = {
+          id: doc.id,
+          ...doc.data(),
+        };
+        likesAllData.push(data);
+      });
+      const likesData = storeInfo.uid ? likesAllData.filter(e => storeInfo.uid === e.uid) : [];
+      setLike(likesData);
     };
     fetchData();
-  }, [postData.postId]);
+  }, [postData.postId, likeStatus]);
 
-  console.log(comments);
-  // 등록
-  const addComment = async event => {
-    event.preventDefault();
-    try {
-      const docRef = await addDoc(collection(db, 'comments'), {
-        uid: storeInfo.uid,
-        cmtContents,
-        date: nowTime,
-        nickName: storeInfo.nickname,
-        profileImg: storeInfo.profileImg,
-        postId: postData.postId,
-      });
-    } catch (e) {
-      console.error('Error adding document: ', e);
+  const postLike = async (likeOrNot, likeid) => {
+    if (!storeInfo.uid) {
+      alert('좋아요 기능은 로그인을 해야 가능합니다!');
+      const confirm = window.confirm('로그인 하시겠습니까?');
+      if (confirm) navigate('/login');
+    } else {
+      const UUID = uuid();
+      const postRef = doc(db, 'post-item', postData.postId);
+      const collectionRef = doc(collection(db, 'likes'), UUID);
+      let searchRef;
+      likeid ? (searchRef = doc(collection(db, 'likes'), likeid)) : (searchRef = false);
+
+      if (!likeOrNot) {
+        await updateDoc(postRef, { likeCount: postData.likeCount + 1 });
+        searchRef
+          ? await updateDoc(searchRef, { likeOrNot: !likeOrNot })
+          : await setDoc(collectionRef, {
+              id: UUID,
+              uid: storeInfo.uid,
+              postId: postData.postId,
+              likeOrNot: true,
+            });
+        postData.likeCount++;
+      } else if (likeOrNot) {
+        await updateDoc(postRef, { ...postData, likeCount: postData.likeCount - 1 });
+        await updateDoc(searchRef, { likeOrNot: !likeOrNot });
+        postData.likeCount--;
+      }
+      setLikeStatus(!likeStatus);
     }
-
-    setCmtContents('');
   };
+  const likeOrNot = like.find(e => e.postId === postData.postId)?.likeOrNot ?? false;
+  const likeid = like.find(e => e.postId === postData.postId)?.id ?? false;
+
   return (
     <Layout>
       <Wrap>
@@ -82,45 +111,38 @@ const Detail = () => {
             <PostImg src={postData.photoURL} alt="" />
             {/* <div>{postData.postId}</div> */}
             <LikeDiv>
+              <HeartDiv onClick={() => postLike(likeOrNot, likeid)} style={{ cursor: 'pointer' }}>
+                {likeOrNot ? (
+                  <HeartSvg xmlns="http://www.w3.org/2000/svg" height="1.5em" viewBox="0 0 512 512" fill="rgb(255, 48, 64)">
+                    <path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z" />
+                  </HeartSvg>
+                ) : (
+                  <HeartSvg xmlns="http://www.w3.org/2000/svg" height="1.5em" viewBox="0 0 512 512" fill="rgb(224, 224, 224)">
+                    <path d="M225.8 468.2l-2.5-2.3L48.1 303.2C17.4 274.7 0 234.7 0 192.8v-3.3c0-70.4 50-130.8 119.2-144C158.6 37.9 198.9 47 231 69.6c9 6.4 17.4 13.8 25 22.3c4.2-4.8 8.7-9.2 13.5-13.3c3.7-3.2 7.5-6.2 11.5-9c0 0 0 0 0 0C313.1 47 353.4 37.9 392.8 45.4C462 58.6 512 119.1 512 189.5v3.3c0 41.9-17.4 81.9-48.1 110.4L288.7 465.9l-2.5 2.3c-8.2 7.6-19 11.9-30.2 11.9s-22-4.2-30.2-11.9zM239.1 145c-.4-.3-.7-.7-1-1.1l-17.8-20c0 0-.1-.1-.1-.1c0 0 0 0 0 0c-23.1-25.9-58-37.7-92-31.2C81.6 101.5 48 142.1 48 189.5v3.3c0 28.5 11.9 55.8 32.8 75.2L256 430.7 431.2 268c20.9-19.4 32.8-46.7 32.8-75.2v-3.3c0-47.3-33.6-88-80.1-96.9c-34-6.5-69 5.4-92 31.2c0 0 0 0-.1 .1s0 0-.1 .1l-17.8 20c-.3 .4-.7 .7-1 1.1c-4.5 4.5-10.6 7-16.9 7s-12.4-2.5-16.9-7z" />
+                  </HeartSvg>
+                )}
+              </HeartDiv>
               <PostWeightfont>좋아요 {postData.likeCount}개</PostWeightfont>
             </LikeDiv>
             <PostContents>{postData.contents}</PostContents>
           </div>
         </PostBox>
         {/* 댓글 입력 */}
-        <CommentSection>
-          <CommentForm onSubmit={addComment}>
-            {/* <label htmlFor="">작성자</label>
-            <input type="text" /> 작성자 불러오기 */}
-            <CommentInputLabel htmlFor="">댓글 입력</CommentInputLabel>
-            <CommentInput
-              value={cmtContents}
-              onChange={event => {
-                setCmtContents(event.target.value);
-              }}
-              type="text"
-            />
-            <StButton type="submit">등록</StButton>
-          </CommentForm>
-        </CommentSection>
+        <CmtInputForm cmtContents={cmtContents} setCmtContents={setCmtContents} cmtChangeHandler={cmtChangeHandler} nowTime={nowTime} postData={postData} />
         {/* 댓글 리스트 */}
         {filteredComments.map(item => {
           return (
             <CommentList key={item.uid}>
               {' '}
-              {/* uid를 고유한 키 값으로 사용 */}
               <ProfileImg>
                 <img src={item.profileImg} alt="" />
               </ProfileImg>
               <CmtContents>
-                <div>
-                  <EditWrap>
-                    <Editer>{item.nickName}</Editer>
-                    <EditCon>{item.cmtContents}</EditCon>
-                  </EditWrap>
-                  <SmallFont>{item.date.toString()}</SmallFont>
-                </div>
-                <div>하트</div>
+                <EditWrap>
+                  <Editer>{item.nickName}</Editer>
+                  <EditCon>{item.cmtContents}</EditCon>
+                </EditWrap>
+                <SmallFont>{item.date.toString()}</SmallFont>
               </CmtContents>
             </CommentList>
           );
@@ -132,10 +154,6 @@ const Detail = () => {
 
 export default Detail;
 
-const PostContents = styled.div``;
-const LikeDiv = styled.div`
-  padding: 15px 0 15px 0;
-`;
 const Wrap = styled.div`
   width: 40%;
   margin: 50px auto;
@@ -143,6 +161,31 @@ const Wrap = styled.div`
     width: 100%;
   }
 `;
+
+// 좋아요
+const LikeDiv = styled.div`
+  padding: 15px 0 15px 0;
+  display: flex;
+  align-items: center;
+  padding-bottom: 10px;
+`;
+const HeartDiv = styled.div`
+  padding-right: 8px;
+`;
+const HeartSvg = styled.svg`
+  transition: transform 0.3s, fill 0.3s;
+  fill: ${props => props.fill};
+  &:hover {
+    transform: scale(1.2);
+  }
+`;
+const PostWeightfont = styled.p`
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 2px;
+`;
+const PostContents = styled.div``;
+
 const PostBox = styled.div`
   /* min-width: 400px; */
 `;
@@ -169,11 +212,7 @@ const ProfileImg = styled.div`
 const Pbox = styled.div`
   margin-left: 5px;
 `;
-const PostWeightfont = styled.p`
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 5px;
-`;
+
 const PostImg = styled.img`
   width: 100%;
   overflow: hidden;
@@ -186,90 +225,25 @@ const SmallFont = styled.p`
   color: #727272;
 `;
 
-// 댓글 입력 폼
-const CommentSection = styled.div``;
-const CommentForm = styled.form`
-  margin: 40px 0;
-  min-width: 400px;
-`;
-const CommentInputLabel = styled.label`
-  display: block;
-  width: 100%;
-  font-size: 0.8rem;
-  color: #8a8a8a;
-
-  min-width: 400px;
-`;
-const CommentInput = styled.input`
-  width: 80%;
-  border: 0;
-  line-height: 1.4;
-  padding: 5px 2px;
-  border-bottom: solid 1px #efefef;
-  margin-right: 20px;
-  &:focus {
-    outline: 0;
-  }
-`;
-const StButton = styled.button`
-  width: calc(20% - 20px);
-  padding: 10px 17px;
-  border-radius: 5px;
-  border: none;
-  border: 1px solid black;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 13px;
-  color: black;
-  background-color: #fff;
-  position: relative;
-
-  &::before {
-    content: '';
-    width: 0%;
-    height: 100%;
-    position: absolute;
-    border-radius: 4px;
-    z-index: -1;
-    background-color: black;
-    left: 0;
-    top: 0;
-    transition: 0.3s ease-in-out;
-  }
-  &:hover {
-    color: #fff;
-    z-index: 1;
-  }
-  &:hover::before {
-    content: '';
-    width: 100%;
-    min-width: 100%;
-    height: 100%;
-    color: white;
-    position: absolute;
-  }
-`;
-
 // 댓글 목록
 const CommentList = styled.div`
   display: flex;
   margin: 15px 0;
   min-width: 400px;
 `;
-
 const CmtContents = styled.div`
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  > div {
-  }
 `;
 const EditWrap = styled.div`
   width: 100%;
-  margin-bottom: 5px;
+  display: flex;
 `;
 const Editer = styled.span`
+  line-height: 1.5;
   margin-right: 20px;
   font-weight: bold;
 `;
-const EditCon = styled.span``;
+const EditCon = styled.span`
+  white-space: normal;
+  line-height: 1.5;
+`;

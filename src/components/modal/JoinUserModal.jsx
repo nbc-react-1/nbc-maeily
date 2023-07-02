@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 
 const JoinUserModal = () => {
   const navigation = useNavigate();
-
   const emailRef = useRef('');
   const nicknameRef = useRef('');
 
@@ -17,6 +16,7 @@ const JoinUserModal = () => {
   const [name, setname] = useState('');
   const [nickname, setNickname] = useState('');
 
+  const [isOpen, setIsOpen] = useState(false);
   const [checkEmail, setCheckEmail] = useState('');
   const [checkPassword, setCheckPassword] = useState('');
   const [checkname, setCheckname] = useState('');
@@ -30,31 +30,26 @@ const JoinUserModal = () => {
   // 검사 전부 true 시 '가입하기' 버튼 활성화(disabled = false)
   // 이메일 유효성 검사
   const emailCheck = email => {
-    if (emailRegEx.test(email)) setCheckEmail(true);
-    else setCheckEmail(false);
+    setCheckEmail(emailRegEx.test(email));
   };
   // 비밀번호 유효성 검사
   const passwordCheck = password => {
-    if (passwordRegEx.test(password)) setCheckPassword(true);
-    else setCheckPassword(false);
+    setCheckPassword(passwordRegEx.test(password));
   };
   // 아이디 유효성 검사
   const nameCheck = name => {
-    if (nameRegEx.test(name)) setCheckname(true);
-    else setCheckname(false);
+    setCheckname(nameRegEx.test(name));
   };
   // 닉네임 유효성 검사
   const nicknameCheck = nickname => {
-    if (nickname.length >= 2 && nickname.length <= 16) setCheckNickname(true);
-    else setCheckNickname(false);
+    setCheckNickname(nickname.length >= 2 && nickname.length <= 16);
   };
 
   // 모달창 true, false
-  const [isOpen, setIsOpen] = useState(false);
-
   const openModal = () => {
     setIsOpen(true);
   };
+
   // 모달창 닫으면 input 값들 초기화
   const closeModal = () => {
     setIsOpen(false);
@@ -83,8 +78,7 @@ const JoinUserModal = () => {
       });
       if (overlapNickname === -1 || overlapNickname === undefined) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        console.log('userCredential', userCredential);
-        const newUsers = { uid: userCredential.user.uid, email, password, nickname, name, profileImg: 'https://i.pinimg.com/564x/c8/4a/26/c84a26e10efef9989716f06e9cc91960.jpg' };
+        const newUsers = { uid: userCredential.user.uid, email, password, nickname, name, profileImg: 'https://github.com/nbc-react-1/nbc-maeily/assets/133937368/fb2cf533-2930-4dad-9c78-50f109e29b40' };
         setDoc(doc(db, 'users', userCredential.user.uid), newUsers);
         if (userCredential) alert('회원가입이 정상적으로 처리되었습니다!');
         navigation('/');
